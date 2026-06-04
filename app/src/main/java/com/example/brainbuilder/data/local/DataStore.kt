@@ -14,6 +14,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "br
 class DataStore(private val context: Context) {
 
     private val JWT_KEY = stringPreferencesKey("jwt_token")
+    private val USER_ID_KEY = stringPreferencesKey("user_id")
 
     suspend fun saveToken(jwt: String) {
         context.dataStore.edit { prefs ->
@@ -27,9 +28,22 @@ class DataStore(private val context: Context) {
         }.first()
     }
 
+    suspend fun saveUserId(userId: String) {
+        context.dataStore.edit { prefs ->
+            prefs[USER_ID_KEY] = userId
+        }
+    }
+
+    suspend fun getUserId(): String {
+        return context.dataStore.data.map { prefs ->
+            prefs[USER_ID_KEY] ?: ""
+        }.first()
+    }
+
     suspend fun clearToken() {
         context.dataStore.edit { prefs ->
             prefs.remove(JWT_KEY)
+            prefs.remove(USER_ID_KEY)
         }
     }
 }

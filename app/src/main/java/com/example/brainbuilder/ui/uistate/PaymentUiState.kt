@@ -9,6 +9,8 @@ data class PaymentUiState(
     val subscriptionStatus: SubscriptionStatus? = null,
     val paymentUrl: String? = null,
     val orderId: String? = null,
+    // True while polling the subscription endpoint after the Midtrans page closes (NFR-03).
+    val isVerifyingPayment: Boolean = false,
     val errorMessage: String? = null,
     val isPaymentSuccess: Boolean = false
 )

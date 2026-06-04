@@ -58,6 +58,7 @@ class AuthViewModel(
                 if (response.isSuccessful && response.body()?.success == true) {
                     val authData = response.body()!!.data
                     dataStore.saveToken(authData.accessToken)
+                    dataStore.saveUserId(authData.userId)
                     _loginUiState.update { it.copy(isLoading = false, isSuccess = true, userRole = authData.role) }
                 } else {
                     _loginUiState.update { it.copy(isLoading = false, hasError = true, errorMessage = "Invalid email or password") }

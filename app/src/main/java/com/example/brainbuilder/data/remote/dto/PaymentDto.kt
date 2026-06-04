@@ -1,12 +1,11 @@
 package com.example.brainbuilder.data.remote.dto
 
-data class CreatePaymentRequest(
-    val planId: String
-)
+import com.google.gson.annotations.SerializedName
 
-data class CreatePaymentResponse(
-    val success: Boolean,
-    val data: PaymentData
+data class CreatePaymentRequest(
+    val planId: String,
+    // Required by the backend validator even though it overrides it with the JWT subject.
+    val userId: String
 )
 
 data class PaymentData(
@@ -18,17 +17,11 @@ data class PlanItem(
     val id: String,
     val name: String,
     val price: Double,
-    val durationDays: Int
+    @SerializedName("duration_days") val durationDays: Int
 )
 
 data class SubscriptionStatus(
-    val id: String,
     val status: String,
-    val startDate: String?,
-    val expiresAt: String?
-)
-
-data class ApiErrorResponse(
-    val success: Boolean,
-    val error: String
+    @SerializedName("start_date") val startDate: String? = null,
+    @SerializedName("expires_at") val expiresAt: String? = null
 )

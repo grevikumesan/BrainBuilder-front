@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,8 +13,13 @@ import androidx.navigation.navArgument
 import com.example.brainbuilder.data.remote.container.AppContainer
 import com.example.brainbuilder.ui.route.Route
 import com.example.brainbuilder.ui.theme.BrainBuilderTheme
+import com.example.brainbuilder.ui.viewmodels.AuthViewModel
+import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
+import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
+import com.example.brainbuilder.ui.views.screen.LoginScreen
 import com.example.brainbuilder.ui.views.screen.PaymentScreen
+import com.example.brainbuilder.ui.views.screen.RegisterScreen
 import com.example.brainbuilder.ui.views.screen.SubscriptionScreen
 
 class MainActivity : ComponentActivity() {
@@ -28,14 +32,37 @@ class MainActivity : ComponentActivity() {
         setContent {
             BrainBuilderTheme {
                 val navController = rememberNavController()
-                val paymentViewModel = viewModel<com.example.brainbuilder.ui.viewmodels.PaymentViewModel>(
-                    factory = PaymentViewModelFactory(appContainer.paymentRepository)
+
+                val authViewModel = viewModel<AuthViewModel>(
+                    factory = AuthViewModelFactory(appContainer.authRepository, appContainer.dataStore)
+                )
+                val paymentViewModel = viewModel<PaymentViewModel>(
+                    factory = PaymentViewModelFactory(appContainer.paymentRepository, appContainer.dataStore)
                 )
 
                 NavHost(
                     navController = navController,
-                    startDestination = Route.Subscription.route
+                    startDestination = Route.Login.route
                 ) {
+                    composable(Route.Login.route) {
+                        LoginScreen(
+                            viewModel = authViewModel,
+                            onNavigateToRegister = { navController.navigate(Route.Register.route) },
+                            onLoginSuccess = {
+                                navController.navigate(Route.Subscription.route) {
+                                    popUpTo(Route.Login.route) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    composable(Route.Register.route) {
+                        RegisterScreen(
+                            viewModel = authViewModel,
+                            onNavigateToLogin = { navController.popBackStack(Route.Login.route, false) }
+                        )
+                    }
+
                     composable(Route.Subscription.route) {
                         SubscriptionScreen(
                             viewModel = paymentViewModel,
@@ -67,11 +94,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    BrainBuilderTheme {
-//        Greeting("Android")
-//    }
-//}
