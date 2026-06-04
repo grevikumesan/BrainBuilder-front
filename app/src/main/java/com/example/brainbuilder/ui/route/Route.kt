@@ -7,4 +7,5 @@ sealed class Route(val route: String) {
     object Payment : Route("payment/{paymentUrl}") {
         fun createRoute(paymentUrl: String) = "payment/$paymentUrl"
     }
+    object AdminDashboard : Route("admin_dashboard")
 }
