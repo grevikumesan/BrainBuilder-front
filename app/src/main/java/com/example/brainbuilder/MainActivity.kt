@@ -15,8 +15,12 @@ import com.example.brainbuilder.ui.route.Route
 import com.example.brainbuilder.ui.theme.BrainBuilderTheme
 import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.AuthViewModel
+import com.example.brainbuilder.ui.viewmodels.CourseViewModel
+import com.example.brainbuilder.ui.viewmodels.CourseViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
+import com.example.brainbuilder.ui.views.screen.CourseListScreen
+import com.example.brainbuilder.ui.views.screen.LessonScreen
 import com.example.brainbuilder.ui.views.screen.LoginScreen
 import com.example.brainbuilder.ui.views.screen.PaymentScreen
 import com.example.brainbuilder.ui.views.screen.RegisterScreen
@@ -41,6 +45,10 @@ class MainActivity : ComponentActivity() {
                     factory = PaymentViewModelFactory(appContainer.paymentRepository)
                 )
 
+                val courseViewModel = viewModel<CourseViewModel>(
+                    factory = CourseViewModelFactory(appContainer.courseRepository)
+                )
+
                 NavHost(
                     navController = navController,
                     startDestination = Route.Login.route
@@ -52,7 +60,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(Route.Register.route)
                             },
                             onLoginSuccess = { _ ->
-                                navController.navigate(Route.Subscription.route) {
+                                navController.navigate(Route.CourseList.route) {
                                     popUpTo(Route.Login.route) { inclusive = true }
                                 }
                             }
@@ -64,6 +72,34 @@ class MainActivity : ComponentActivity() {
                             viewModel = authViewModel,
                             onNavigateToLogin = {
                                 navController.popBackStack()
+                            }
+                        )
+                    }
+
+                    composable(Route.CourseList.route) {
+                        CourseListScreen(
+                            viewModel = courseViewModel,
+                            onCourseSelected = { courseId ->
+                                navController.navigate(Route.Lesson.createRoute(courseId))
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = Route.Lesson.route,
+                        arguments = listOf(
+                            navArgument("lessonId") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+                        LessonScreen(
+                            lessonId = lessonId,
+                            viewModel = courseViewModel,
+                            onStartQuiz = { quizId ->
+                                // TODO(jason): navigate to quiz screen once UC-03 is implemented
+                            },
+                            onSubscribeRequired = {
+                                navController.navigate(Route.Subscription.route)
                             }
                         )
                     }
