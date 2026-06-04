@@ -15,12 +15,15 @@ import com.example.brainbuilder.ui.route.Route
 import com.example.brainbuilder.ui.theme.BrainBuilderTheme
 import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.AuthViewModel
+import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModel
+import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 import com.example.brainbuilder.ui.viewmodels.CourseViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.QuizViewModel
 import com.example.brainbuilder.ui.viewmodels.QuizViewModelFactory
+import com.example.brainbuilder.ui.views.screen.CourseDetailScreen
 import com.example.brainbuilder.ui.views.screen.CourseListScreen
 import com.example.brainbuilder.ui.views.screen.LessonScreen
 import com.example.brainbuilder.ui.views.screen.LoginScreen
@@ -56,6 +59,10 @@ class MainActivity : ComponentActivity() {
                     factory = QuizViewModelFactory(appContainer.quizRepository)
                 )
 
+                val courseDetailViewModel = viewModel<CourseDetailViewModel>(
+                    factory = CourseDetailViewModelFactory(appContainer.courseDetailRepository)
+                )
+
                 NavHost(
                     navController = navController,
                     startDestination = Route.Login.route
@@ -87,7 +94,7 @@ class MainActivity : ComponentActivity() {
                         CourseListScreen(
                             viewModel = courseViewModel,
                             onCourseSelected = { courseId ->
-                                navController.navigate(Route.Lesson.createRoute(courseId))
+                                navController.navigate(Route.CourseDetail.createRoute(courseId))
                             }
                         )
                     }
@@ -122,6 +129,23 @@ class MainActivity : ComponentActivity() {
                             lessonId = lessonId,
                             viewModel = quizViewModel,
                             onBack = { navController.popBackStack() }
+                        )
+                    }
+
+                    composable(
+                        route = Route.CourseDetail.route,
+                        arguments = listOf(
+                            navArgument("courseId") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
+                        CourseDetailScreen(
+                            courseId = courseId,
+                            viewModel = courseDetailViewModel,
+                            onBack = { navController.popBackStack() },
+                            onLessonSelected = { lessonId ->
+                                navController.navigate(Route.Lesson.createRoute(lessonId))
+                            }
                         )
                     }
 
