@@ -19,10 +19,13 @@ import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 import com.example.brainbuilder.ui.viewmodels.CourseViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
+import com.example.brainbuilder.ui.viewmodels.QuizViewModel
+import com.example.brainbuilder.ui.viewmodels.QuizViewModelFactory
 import com.example.brainbuilder.ui.views.screen.CourseListScreen
 import com.example.brainbuilder.ui.views.screen.LessonScreen
 import com.example.brainbuilder.ui.views.screen.LoginScreen
 import com.example.brainbuilder.ui.views.screen.PaymentScreen
+import com.example.brainbuilder.ui.views.screen.QuizScreen
 import com.example.brainbuilder.ui.views.screen.RegisterScreen
 import com.example.brainbuilder.ui.views.screen.SubscriptionScreen
 
@@ -47,6 +50,10 @@ class MainActivity : ComponentActivity() {
 
                 val courseViewModel = viewModel<CourseViewModel>(
                     factory = CourseViewModelFactory(appContainer.courseRepository)
+                )
+
+                val quizViewModel = viewModel<QuizViewModel>(
+                    factory = QuizViewModelFactory(appContainer.quizRepository)
                 )
 
                 NavHost(
@@ -95,12 +102,26 @@ class MainActivity : ComponentActivity() {
                         LessonScreen(
                             lessonId = lessonId,
                             viewModel = courseViewModel,
-                            onStartQuiz = { quizId ->
-                                // TODO(jason): navigate to quiz screen once UC-03 is implemented
+                            onStartQuiz = { lessonId ->
+                                navController.navigate(Route.Quiz.createRoute(lessonId))
                             },
                             onSubscribeRequired = {
                                 navController.navigate(Route.Subscription.route)
                             }
+                        )
+                    }
+
+                    composable(
+                        route = Route.Quiz.route,
+                        arguments = listOf(
+                            navArgument("lessonId") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+                        QuizScreen(
+                            lessonId = lessonId,
+                            viewModel = quizViewModel,
+                            onBack = { navController.popBackStack() }
                         )
                     }
 

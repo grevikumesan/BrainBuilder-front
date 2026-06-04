@@ -5,9 +5,11 @@ import com.example.brainbuilder.data.local.DataStore
 import com.example.brainbuilder.data.remote.repository.AuthRepository
 import com.example.brainbuilder.data.remote.repository.CourseRepository
 import com.example.brainbuilder.data.remote.repository.PaymentRepository
+import com.example.brainbuilder.data.remote.repository.QuizRepository
 import com.example.brainbuilder.data.remote.service.AuthService
 import com.example.brainbuilder.data.remote.service.CourseService
 import com.example.brainbuilder.data.remote.service.PaymentService
+import com.example.brainbuilder.data.remote.service.QuizService
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -58,9 +60,11 @@ class AppContainer(context: Context) {
     private val paymentService: PaymentService = retrofit.create(PaymentService::class.java)
     private val authService: AuthService = retrofit.create(AuthService::class.java)
     private val courseService: CourseService = retrofit.create(CourseService::class.java)
+    private val quizService = retrofit.create(QuizService::class.java)
 
 
     val paymentRepository: PaymentRepository = PaymentRepository(paymentService)
     val authRepository: AuthRepository = AuthRepository(authService)
     val courseRepository: CourseRepository = CourseRepository(courseService)
+    val quizRepository = QuizRepository(quizService)
 }
