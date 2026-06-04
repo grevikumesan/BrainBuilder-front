@@ -12,4 +12,7 @@ sealed class Route(val route: String) {
     object Lesson : Route("lesson/{lessonId}") {
         fun createRoute(lessonId: String) = "lesson/$lessonId"
     }
+    object Quiz : Route("quiz/{lessonId}") {
+        fun createRoute(lessonId: String) = "quiz/$lessonId"
+    }
 }
