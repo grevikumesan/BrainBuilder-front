@@ -8,13 +8,16 @@ import com.example.brainbuilder.data.remote.repository.ContentEditorRepository
 import com.example.brainbuilder.data.remote.repository.CourseDetailRepository
 import com.example.brainbuilder.data.remote.repository.CourseRepository
 import com.example.brainbuilder.data.remote.repository.PaymentRepository
+import com.example.brainbuilder.data.remote.repository.ProgressRepository
 import com.example.brainbuilder.data.remote.repository.QuizRepository
 import com.example.brainbuilder.data.remote.service.AdminService
 import com.example.brainbuilder.data.remote.service.AuthService
 import com.example.brainbuilder.data.remote.service.ContentEditorService
 import com.example.brainbuilder.data.remote.service.CourseDetailService
 import com.example.brainbuilder.data.remote.service.CourseService
+import com.example.brainbuilder.data.remote.service.ExplanationService
 import com.example.brainbuilder.data.remote.service.PaymentService
+import com.example.brainbuilder.data.remote.service.ProgressService
 import com.example.brainbuilder.data.remote.service.QuizService
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking
@@ -63,6 +66,32 @@ class AppContainer(context: Context) {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
+    // Public "anon" key — safe to ship in the client. Get it from the Supabase
+    // dashboard: Project Settings -> API -> Project API keys -> "anon public".
+    // Required as the `apikey` header for UC-04 PostgREST explanation reads.
+    private val supabaseAnonKey = "REPLACE_WITH_SUPABASE_ANON_PUBLIC_KEY"
+
+    // PostgREST (/rest/v1) requires the anon apikey in addition to the user JWT
+    // that drives Row Level Security. Used only by UC-04 explanation reads.
+    private val restOkHttpClient = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val token = runBlocking { dataStore.getToken() }
+            val builder = chain.request().newBuilder()
+                .addHeader("apikey", supabaseAnonKey)
+            if (token.isNotEmpty()) {
+                builder.addHeader("Authorization", "Bearer $token")
+            }
+            chain.proceed(builder.build())
+        }
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    private val restRetrofit: Retrofit = Retrofit.Builder()
+        .baseUrl("https://boofqcpycuoujiscahti.supabase.co/rest/v1/")
+        .client(restOkHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
     private val paymentService: PaymentService = retrofit.create(PaymentService::class.java)
     private val authService: AuthService = retrofit.create(AuthService::class.java)
     private val adminService: AdminService = retrofit.create(AdminService::class.java)
@@ -70,13 +99,16 @@ class AppContainer(context: Context) {
     private val quizService = retrofit.create(QuizService::class.java)
     private val courseDetailService: CourseDetailService = retrofit.create(CourseDetailService::class.java)
     private val contentEditorService: ContentEditorService = retrofit.create(ContentEditorService::class.java)
+    private val progressService: ProgressService = retrofit.create(ProgressService::class.java)
+    private val explanationService: ExplanationService = restRetrofit.create(ExplanationService::class.java)
 
 
     val paymentRepository: PaymentRepository = PaymentRepository(paymentService)
+    val progressRepository: ProgressRepository = ProgressRepository(progressService)
     val authRepository: AuthRepository = AuthRepository(authService)
     val adminRepository: AdminRepository = AdminRepository(adminService)
     val courseRepository: CourseRepository = CourseRepository(courseService)
-    val quizRepository = QuizRepository(quizService)
+    val quizRepository = QuizRepository(quizService, courseService, explanationService)
     val courseDetailRepository: CourseDetailRepository = CourseDetailRepository(courseDetailService)
     val contentEditorRepository: ContentEditorRepository = ContentEditorRepository(contentEditorService)
 }

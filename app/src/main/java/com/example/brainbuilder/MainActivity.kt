@@ -25,6 +25,8 @@ import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 import com.example.brainbuilder.ui.viewmodels.CourseViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
+import com.example.brainbuilder.ui.viewmodels.ProgressViewModel
+import com.example.brainbuilder.ui.viewmodels.ProgressViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.QuizViewModel
 import com.example.brainbuilder.ui.viewmodels.QuizViewModelFactory
 import com.example.brainbuilder.ui.views.screen.AdminDashboardScreen
@@ -34,6 +36,7 @@ import com.example.brainbuilder.ui.views.screen.CourseListScreen
 import com.example.brainbuilder.ui.views.screen.LessonScreen
 import com.example.brainbuilder.ui.views.screen.LoginScreen
 import com.example.brainbuilder.ui.views.screen.PaymentScreen
+import com.example.brainbuilder.ui.views.screen.ProgressScreen
 import com.example.brainbuilder.ui.views.screen.QuizScreen
 import com.example.brainbuilder.ui.views.screen.RegisterScreen
 import com.example.brainbuilder.ui.views.screen.SubscriptionScreen
@@ -75,6 +78,10 @@ class MainActivity : ComponentActivity() {
 
                 val adminViewModel = viewModel<AdminViewModel>(
                     factory = AdminViewModelFactory(appContainer.adminRepository)
+                )
+
+                val progressViewModel = viewModel<ProgressViewModel>(
+                    factory = ProgressViewModelFactory(appContainer.progressRepository)
                 )
 
                 NavHost(
@@ -122,7 +129,17 @@ class MainActivity : ComponentActivity() {
                             viewModel = courseViewModel,
                             onCourseSelected = { courseId ->
                                 navController.navigate(Route.CourseDetail.createRoute(courseId))
+                            },
+                            onOpenProgress = {
+                                navController.navigate(Route.Progress.route)
                             }
+                        )
+                    }
+
+                    composable(Route.Progress.route) {
+                        ProgressScreen(
+                            viewModel = progressViewModel,
+                            onBack = { navController.popBackStack() }
                         )
                     }
 

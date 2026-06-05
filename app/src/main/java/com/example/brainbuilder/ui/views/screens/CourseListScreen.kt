@@ -19,6 +19,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,14 +34,15 @@ import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.CourseItem
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 
-private val SUBJECTS = listOf("MATH", "PHYSICS", "CHEMISTRY")
+private val SUBJECTS = listOf("MATHEMATICS", "PHYSICS", "CHEMISTRY")
 private val GRADES = listOf("X", "XI", "XII")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseListScreen(
     viewModel: CourseViewModel,
-    onCourseSelected: (courseId: String) -> Unit
+    onCourseSelected: (courseId: String) -> Unit,
+    onOpenProgress: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -52,7 +54,14 @@ fun CourseListScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Courses") }) }
+        topBar = {
+            TopAppBar(
+                title = { Text("Courses") },
+                actions = {
+                    TextButton(onClick = onOpenProgress) { Text("Progress") }
+                }
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier
