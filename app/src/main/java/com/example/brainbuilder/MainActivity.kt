@@ -13,6 +13,8 @@ import androidx.navigation.navArgument
 import com.example.brainbuilder.data.remote.container.AppContainer
 import com.example.brainbuilder.ui.route.Route
 import com.example.brainbuilder.ui.theme.BrainBuilderTheme
+import com.example.brainbuilder.ui.viewmodels.AdminViewModel
+import com.example.brainbuilder.ui.viewmodels.AdminViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.AuthViewModel
 import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.ContentEditorViewModel
@@ -25,6 +27,7 @@ import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.QuizViewModel
 import com.example.brainbuilder.ui.viewmodels.QuizViewModelFactory
+import com.example.brainbuilder.ui.views.screen.AdminDashboardScreen
 import com.example.brainbuilder.ui.views.screen.ContentEditorScreen
 import com.example.brainbuilder.ui.views.screen.CourseDetailScreen
 import com.example.brainbuilder.ui.views.screen.CourseListScreen
@@ -70,6 +73,10 @@ class MainActivity : ComponentActivity() {
                     factory = ContentEditorViewModelFactory(appContainer.contentEditorRepository)
                 )
 
+                val adminViewModel = viewModel<AdminViewModel>(
+                    factory = AdminViewModelFactory(appContainer.adminRepository)
+                )
+
                 NavHost(
                     navController = navController,
                     startDestination = Route.Login.route
@@ -81,10 +88,10 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(Route.Register.route)
                             },
                             onLoginSuccess = { role ->
-                                val destination = if (role == "TEACHER") {
-                                    Route.CreateCourse.route
-                                } else {
-                                    Route.CourseList.route
+                                val destination = when (role) {
+                                    "TEACHER" -> Route.CreateCourse.route
+                                    "ADMIN" -> Route.AdminDashboard.route
+                                    else -> Route.CourseList.route
                                 }
                                 navController.navigate(destination) {
                                     popUpTo(Route.Login.route) { inclusive = true }
@@ -104,6 +111,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(Route.CreateCourse.route) {
                         ContentEditorScreen(viewModel = contentEditorViewModel)
+                    }
+
+                    composable(Route.AdminDashboard.route) {
+                        AdminDashboardScreen(viewModel = adminViewModel)
                     }
 
                     composable(Route.CourseList.route) {
