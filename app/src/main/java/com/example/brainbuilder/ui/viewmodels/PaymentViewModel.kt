@@ -129,11 +129,12 @@ class PaymentViewModel(
         }
     }
 
+    // UC-06 endpoint returns { plans, currentSubscription }; we only need the status here.
     private suspend fun fetchSubscription(): SubscriptionStatus? {
         return try {
-            val response = paymentRepository.getSubscriptionStatus()
+            val response = paymentRepository.getManageSubscription()
             val body = response.body()
-            if (response.isSuccessful && body?.success == true) body.data else null
+            if (response.isSuccessful && body?.success == true) body.data?.currentSubscription else null
         } catch (e: Exception) {
             null
         }

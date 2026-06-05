@@ -104,6 +104,18 @@ fun SubscriptionScreen(
                             text = "Status: ${status.status}",
                             style = MaterialTheme.typography.titleMedium
                         )
+                        status.planName?.let { planName ->
+                            Text(
+                                text = "Plan: $planName",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        status.expiryDate?.let { expiry ->
+                            Text(
+                                text = "Expires: $expiry",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
