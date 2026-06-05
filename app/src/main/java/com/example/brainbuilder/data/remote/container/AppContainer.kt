@@ -69,7 +69,7 @@ class AppContainer(context: Context) {
     // Public "anon" key — safe to ship in the client. Get it from the Supabase
     // dashboard: Project Settings -> API -> Project API keys -> "anon public".
     // Required as the `apikey` header for UC-04 PostgREST explanation reads.
-    private val supabaseAnonKey = "REPLACE_WITH_SUPABASE_ANON_PUBLIC_KEY"
+    private val supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvb2ZxY3B5Y3VvdWppc2NhaHRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMzM2ODMsImV4cCI6MjA5NTYwOTY4M30.symDon--YxM38EZ5B0Na5e3tLlGv-qJp_Ao2UGHDMUY"
 
     // PostgREST (/rest/v1) requires the anon apikey in addition to the user JWT
     // that drives Row Level Security. Used only by UC-04 explanation reads.
