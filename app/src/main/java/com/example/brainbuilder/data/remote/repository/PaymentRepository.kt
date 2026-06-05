@@ -1,6 +1,8 @@
 package com.example.brainbuilder.data.remote.repository
 
-import com.example.brainbuilder.data.remote.dto.CreatePaymentResponse
+import com.example.brainbuilder.data.remote.dto.ApiResponse
+import com.example.brainbuilder.data.remote.dto.CreatePaymentRequest
+import com.example.brainbuilder.data.remote.dto.PaymentData
 import com.example.brainbuilder.data.remote.dto.PlanItem
 import com.example.brainbuilder.data.remote.dto.SubscriptionStatus
 import com.example.brainbuilder.data.remote.service.PaymentService
@@ -10,17 +12,15 @@ class PaymentRepository(
     private val service: PaymentService
 ) {
 
-    suspend fun createPayment(planId: String): Response<CreatePaymentResponse> {
-        return service.createPayment(
-            com.example.brainbuilder.data.remote.dto.CreatePaymentRequest(planId)
-        )
+    suspend fun createPayment(planId: String, userId: String): Response<ApiResponse<PaymentData>> {
+        return service.createPayment(CreatePaymentRequest(planId, userId))
     }
 
-    suspend fun getSubscriptionStatus(): Response<SubscriptionStatus> {
+    suspend fun getSubscriptionStatus(): Response<ApiResponse<SubscriptionStatus>> {
         return service.getSubscriptionStatus()
     }
 
-    suspend fun getPlans(): Response<List<PlanItem>> {
+    suspend fun getPlans(): Response<ApiResponse<List<PlanItem>>> {
         return service.getPlans()
     }
 }

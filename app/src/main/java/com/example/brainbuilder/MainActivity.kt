@@ -13,8 +13,8 @@ import androidx.navigation.navArgument
 import com.example.brainbuilder.data.remote.container.AppContainer
 import com.example.brainbuilder.ui.route.Route
 import com.example.brainbuilder.ui.theme.BrainBuilderTheme
-import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.AuthViewModel
+import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModel
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 val paymentViewModel = viewModel<PaymentViewModel>(
-                    factory = PaymentViewModelFactory(appContainer.paymentRepository)
+                    factory = PaymentViewModelFactory(appContainer.paymentRepository, appContainer.dataStore)
                 )
 
                 val courseViewModel = viewModel<CourseViewModel>(
