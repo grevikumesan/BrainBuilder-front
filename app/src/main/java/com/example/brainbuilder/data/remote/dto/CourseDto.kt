@@ -42,5 +42,7 @@ data class LessonDetail(
 
 data class QuizSummary(
     val id: String,
-    val lessonId: String
+    val lessonId: String,
+    // Questions to render the quiz (UC-03); the answer key is never sent by the backend
+    val questions: List<QuestionItem> = emptyList()
 )

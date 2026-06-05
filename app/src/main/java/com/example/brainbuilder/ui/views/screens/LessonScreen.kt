@@ -26,7 +26,7 @@ import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 fun LessonScreen(
     lessonId: String,
     viewModel: CourseViewModel,
-    onStartQuiz: (quizId: String) -> Unit,
+    onStartQuiz: (lessonId: String) -> Unit,
     onSubscribeRequired: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -85,7 +85,9 @@ fun LessonScreen(
                     }
                     if (lesson.quiz != null) {
                         Button(
-                            onClick = { onStartQuiz(lesson.quiz.id) },
+                            // Pass the lesson id; the quiz screen re-fetches the lesson
+                            // detail to get the quiz and its questions
+                            onClick = { onStartQuiz(lessonId) },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Start Quiz")

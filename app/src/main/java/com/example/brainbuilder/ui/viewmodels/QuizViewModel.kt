@@ -2,6 +2,7 @@ package com.example.brainbuilder.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.brainbuilder.data.remote.dto.ExplanationItem
 import com.example.brainbuilder.data.remote.repository.QuizRepository
 import com.example.brainbuilder.ui.uistate.QuizUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,13 +20,14 @@ class QuizViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                val response = quizRepository.getQuiz(lessonId)
-                if (response.isSuccessful) {
-                    val quiz = response.body()
+                // The quiz (id + questions) arrives inside the lesson detail
+                val response = quizRepository.getLesson(lessonId)
+                val quiz = response.body()?.data?.lesson?.quiz
+                if (response.isSuccessful && quiz != null) {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        quizId = quiz?.id,
-                        questions = quiz?.questions ?: emptyList()
+                        quizId = quiz.id,
+                        questions = quiz.questions
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(
@@ -56,14 +58,15 @@ class QuizViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
                 val response = quizRepository.gradeQuiz(quizId, answers)
-                if (response.isSuccessful) {
-                    val result = response.body()
+                val body = response.body()
+                if (response.isSuccessful && body?.success == true && body.data != null) {
+                    val result = body.data
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isSubmitted = true,
-                        score = result?.score,
-                        perQuestionCorrectness = result?.perQuestionCorrectness ?: emptyList(),
-                        anyIncorrect = result?.anyIncorrect ?: false
+                        score = result.score,
+                        perQuestionCorrectness = result.perQuestionCorrectness,
+                        anyIncorrect = result.anyIncorrect
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(
@@ -92,9 +95,16 @@ class QuizViewModel(
             try {
                 val response = quizRepository.getExplanations(incorrectIds)
                 if (response.isSuccessful) {
+                    val byQuestion = (response.body() ?: emptyList()).associateBy { it.questionId }
+                    // Keep one entry per incorrect question, in order. Questions with
+                    // no authored explanation get an empty list so the view can still
+                    // page to them and show "Explanation not available yet" (UC-04 Ext 1a)
+                    val ordered = incorrectIds.map { questionId ->
+                        byQuestion[questionId] ?: ExplanationItem(questionId, emptyList())
+                    }
                     _uiState.value = _uiState.value.copy(
                         isLoadingExplanations = false,
-                        cachedExplanations = response.body() ?: emptyList(),
+                        cachedExplanations = ordered,
                         isShowingExplanations = true,
                         currentExplanationIndex = 0
                     )

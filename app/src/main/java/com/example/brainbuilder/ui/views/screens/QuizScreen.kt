@@ -296,7 +296,7 @@ private fun ExplanationView(
             style = MaterialTheme.typography.titleMedium
         )
 
-        if (current != null) {
+        if (current != null && current.steps.isNotEmpty()) {
             current.steps.forEachIndexed { index, step ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(

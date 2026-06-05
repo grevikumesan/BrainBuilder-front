@@ -8,7 +8,7 @@ data class CourseUiState(
     val courses: List<CourseItem> = emptyList(),
     val selectedLesson: LessonDetail? = null,
     val accessAllowed: Boolean = true,
-    val selectedSubject: String = "MATH",
+    val selectedSubject: String = "MATHEMATICS",
     val selectedGrade: String = "X",
     val errorMessage: String? = null
 )

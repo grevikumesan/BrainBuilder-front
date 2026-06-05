@@ -1,5 +1,7 @@
 package com.example.brainbuilder.data.remote.dto
 
+import com.google.gson.annotations.SerializedName
+
 data class GradeQuizRequest(
     val quizId: String,
     val answers: Map<String, String>
@@ -17,21 +19,15 @@ data class QuestionResult(
     val isCorrect: Boolean
 )
 
-data class ExplanationItem(
-    val id: String,
-    val questionId: String,
-    val steps: List<String>
-)
-
-data class QuizItem(
-    val id: String,
-    val lessonId: String,
-    val questions: List<QuestionItem>
-)
-
 data class QuestionItem(
     val id: String,
     val type: String,
     val prompt: String,
     val options: List<String>?
+)
+
+// One explanation row from PostgREST: GET /rest/v1/explanations?select=question_id,steps
+data class ExplanationItem(
+    @SerializedName("question_id") val questionId: String,
+    val steps: List<String>
 )

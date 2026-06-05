@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.CourseDetailResponse
-import com.example.brainbuilder.data.remote.dto.LessonDetail
+import com.example.brainbuilder.data.remote.dto.CourseLesson
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,7 +121,7 @@ private fun CourseContent(
 
 @Composable
 private fun LessonItemCard(
-    lesson: LessonDetail,
+    lesson: CourseLesson,
     onClick: () -> Unit
 ) {
     Card(

@@ -27,10 +27,11 @@ class CourseDetailViewModel(
     private suspend fun fetchCourseDetailSafe(courseId: String) {
         try {
             val response = repository.getCourseDetail(courseId)
-            if (response.isSuccessful) {
+            val body = response.body()
+            if (response.isSuccessful && body?.success == true && body.data != null) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    course = response.body()
+                    course = body.data
                 )
             } else {
                 _uiState.value = _uiState.value.copy(

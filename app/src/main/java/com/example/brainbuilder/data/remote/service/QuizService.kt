@@ -1,22 +1,14 @@
 package com.example.brainbuilder.data.remote.service
 
-import com.example.brainbuilder.data.remote.dto.ExplanationItem
+import com.example.brainbuilder.data.remote.dto.ApiResponse
 import com.example.brainbuilder.data.remote.dto.GradeQuizRequest
 import com.example.brainbuilder.data.remote.dto.GradeQuizResponse
-import com.example.brainbuilder.data.remote.dto.QuizItem
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Query
 
 interface QuizService {
-    @GET("quiz-grader/quiz")
-    suspend fun getQuiz(@Query("lessonId") lessonId: String): Response<QuizItem>
-
-    @POST("quiz-grader/grade")
-    suspend fun gradeQuiz(@Body request: GradeQuizRequest): Response<GradeQuizResponse>
-
-    @GET("quiz-grader/explanations")
-    suspend fun getExplanations(@Query("ids") ids: String): Response<List<ExplanationItem>>
+    // UC-03: server is the sole authority on scoring; client only submits answers
+    @POST("quiz-grader")
+    suspend fun gradeQuiz(@Body request: GradeQuizRequest): Response<ApiResponse<GradeQuizResponse>>
 }
