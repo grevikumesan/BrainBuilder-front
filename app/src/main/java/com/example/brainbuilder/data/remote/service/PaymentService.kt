@@ -2,6 +2,7 @@ package com.example.brainbuilder.data.remote.service
 
 import com.example.brainbuilder.data.remote.dto.CreatePaymentRequest
 import com.example.brainbuilder.data.remote.dto.CreatePaymentResponse
+import com.example.brainbuilder.data.remote.dto.ManageSubscriptionResponse
 import com.example.brainbuilder.data.remote.dto.PlanItem
 import com.example.brainbuilder.data.remote.dto.SubscriptionStatus
 import retrofit2.Response
@@ -18,4 +19,7 @@ interface PaymentService {
 
     @GET("payment-create/plans")
     suspend fun getPlans(): Response<List<PlanItem>>
+
+    @GET("manage-subscription")
+    suspend fun getSubscriptionPage(): Response<ManageSubscriptionResponse>
 }

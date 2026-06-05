@@ -32,3 +32,16 @@ data class ApiErrorResponse(
     val success: Boolean,
     val error: String
 )
+
+data class SubscriptionStatusItem(
+    val status: String,
+    val planId: String?,
+    val planName: String?,
+    val startDate: String?,
+    val expiryDate: String?
+)
+
+data class ManageSubscriptionResponse(
+    val plans: List<PlanItem>,
+    val currentSubscription: SubscriptionStatusItem
+)
