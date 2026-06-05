@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 val paymentViewModel = viewModel<PaymentViewModel>(
-                    factory = PaymentViewModelFactory(appContainer.paymentRepository, appContainer.dataStore)
+                    factory = PaymentViewModelFactory(appContainer.paymentRepository)
                 )
 
                 val courseViewModel = viewModel<CourseViewModel>(

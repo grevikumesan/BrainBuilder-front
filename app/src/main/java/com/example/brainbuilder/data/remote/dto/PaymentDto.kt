@@ -2,10 +2,10 @@ package com.example.brainbuilder.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
+// The paying user is identified server-side from the JWT subject, never from the
+// request body, so a client cannot pay on another user's behalf (NFR-01, UC-07).
 data class CreatePaymentRequest(
-    val planId: String,
-    // Required by the backend validator even though it overrides it with the JWT subject.
-    val userId: String
+    val planId: String
 )
 
 data class PaymentData(

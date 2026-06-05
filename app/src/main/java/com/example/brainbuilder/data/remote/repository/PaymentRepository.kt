@@ -12,8 +12,8 @@ class PaymentRepository(
     private val service: PaymentService
 ) {
 
-    suspend fun createPayment(planId: String, userId: String): Response<ApiResponse<PaymentData>> {
-        return service.createPayment(CreatePaymentRequest(planId, userId))
+    suspend fun createPayment(planId: String): Response<ApiResponse<PaymentData>> {
+        return service.createPayment(CreatePaymentRequest(planId))
     }
 
     suspend fun getSubscriptionStatus(): Response<ApiResponse<SubscriptionStatus>> {

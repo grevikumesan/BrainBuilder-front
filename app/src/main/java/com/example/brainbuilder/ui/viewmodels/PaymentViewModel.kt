@@ -2,7 +2,6 @@ package com.example.brainbuilder.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.brainbuilder.data.local.DataStore
 import com.example.brainbuilder.data.remote.dto.SubscriptionStatus
 import com.example.brainbuilder.data.remote.repository.PaymentRepository
 import com.example.brainbuilder.ui.uistate.PaymentUiState
@@ -12,8 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PaymentViewModel(
-    private val paymentRepository: PaymentRepository,
-    private val dataStore: DataStore
+    private val paymentRepository: PaymentRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PaymentUiState())
@@ -68,8 +66,8 @@ class PaymentViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                val userId = dataStore.getUserId()
-                val response = paymentRepository.createPayment(planId, userId)
+                // Only the planId is sent; the backend reads the paying user from the JWT (NFR-01).
+                val response = paymentRepository.createPayment(planId)
                 val body = response.body()
                 if (response.isSuccessful && body?.success == true && body.data != null) {
                     _uiState.value = _uiState.value.copy(
