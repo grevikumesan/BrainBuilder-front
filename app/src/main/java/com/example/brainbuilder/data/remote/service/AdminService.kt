@@ -1,14 +1,18 @@
 package com.example.brainbuilder.data.remote.service
 
-import com.example.brainbuilder.data.remote.dto.ManageUserRequest
-import com.example.brainbuilder.data.remote.dto.ManageUserResponse
+import com.example.brainbuilder.data.remote.dto.ActionResultData
+import com.example.brainbuilder.data.remote.dto.AdminItemsData
+import com.example.brainbuilder.data.remote.dto.ApiResponse
+import com.example.brainbuilder.data.remote.dto.ManageActionRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AdminService {
-    @POST("admin/manage-user")
-    suspend fun manageUserAction(@Body request: ManageUserRequest): Response<ManageUserResponse>
+    @GET("admin/items")
+    suspend fun getItems(): Response<ApiResponse<AdminItemsData>>
 
-    // TODO(hans): Add endpoint for fetching user and course lists later
+    @POST("admin/action")
+    suspend fun applyAction(@Body request: ManageActionRequest): Response<ApiResponse<ActionResultData>>
 }
