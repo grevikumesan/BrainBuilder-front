@@ -3,11 +3,13 @@ package com.example.brainbuilder.data.remote.container
 import android.content.Context
 import com.example.brainbuilder.data.local.DataStore
 import com.example.brainbuilder.data.remote.repository.AuthRepository
+import com.example.brainbuilder.data.remote.repository.ContentEditorRepository
 import com.example.brainbuilder.data.remote.repository.CourseDetailRepository
 import com.example.brainbuilder.data.remote.repository.CourseRepository
 import com.example.brainbuilder.data.remote.repository.PaymentRepository
 import com.example.brainbuilder.data.remote.repository.QuizRepository
 import com.example.brainbuilder.data.remote.service.AuthService
+import com.example.brainbuilder.data.remote.service.ContentEditorService
 import com.example.brainbuilder.data.remote.service.CourseDetailService
 import com.example.brainbuilder.data.remote.service.CourseService
 import com.example.brainbuilder.data.remote.service.PaymentService
@@ -64,6 +66,7 @@ class AppContainer(context: Context) {
     private val courseService: CourseService = retrofit.create(CourseService::class.java)
     private val quizService = retrofit.create(QuizService::class.java)
     private val courseDetailService: CourseDetailService = retrofit.create(CourseDetailService::class.java)
+    private val contentEditorService: ContentEditorService = retrofit.create(ContentEditorService::class.java)
 
 
     val paymentRepository: PaymentRepository = PaymentRepository(paymentService)
@@ -71,4 +74,5 @@ class AppContainer(context: Context) {
     val courseRepository: CourseRepository = CourseRepository(courseService)
     val quizRepository = QuizRepository(quizService)
     val courseDetailRepository: CourseDetailRepository = CourseDetailRepository(courseDetailService)
+    val contentEditorRepository: ContentEditorRepository = ContentEditorRepository(contentEditorService)
 }

@@ -15,6 +15,8 @@ import com.example.brainbuilder.ui.route.Route
 import com.example.brainbuilder.ui.theme.BrainBuilderTheme
 import com.example.brainbuilder.ui.viewmodels.AuthViewModel
 import com.example.brainbuilder.ui.viewmodels.AuthViewModelFactory
+import com.example.brainbuilder.ui.viewmodels.ContentEditorViewModel
+import com.example.brainbuilder.ui.viewmodels.ContentEditorViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModel
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
@@ -23,6 +25,7 @@ import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModelFactory
 import com.example.brainbuilder.ui.viewmodels.QuizViewModel
 import com.example.brainbuilder.ui.viewmodels.QuizViewModelFactory
+import com.example.brainbuilder.ui.views.screen.ContentEditorScreen
 import com.example.brainbuilder.ui.views.screen.CourseDetailScreen
 import com.example.brainbuilder.ui.views.screen.CourseListScreen
 import com.example.brainbuilder.ui.views.screen.LessonScreen
@@ -63,6 +66,10 @@ class MainActivity : ComponentActivity() {
                     factory = CourseDetailViewModelFactory(appContainer.courseDetailRepository)
                 )
 
+                val contentEditorViewModel = viewModel<ContentEditorViewModel>(
+                    factory = ContentEditorViewModelFactory(appContainer.contentEditorRepository)
+                )
+
                 NavHost(
                     navController = navController,
                     startDestination = Route.Login.route
@@ -73,8 +80,13 @@ class MainActivity : ComponentActivity() {
                             onNavigateToRegister = {
                                 navController.navigate(Route.Register.route)
                             },
-                            onLoginSuccess = { _ ->
-                                navController.navigate(Route.CourseList.route) {
+                            onLoginSuccess = { role ->
+                                val destination = if (role == "TEACHER") {
+                                    Route.CreateCourse.route
+                                } else {
+                                    Route.CourseList.route
+                                }
+                                navController.navigate(destination) {
                                     popUpTo(Route.Login.route) { inclusive = true }
                                 }
                             }
@@ -88,6 +100,10 @@ class MainActivity : ComponentActivity() {
                                 navController.popBackStack()
                             }
                         )
+                    }
+
+                    composable(Route.CreateCourse.route) {
+                        ContentEditorScreen(viewModel = contentEditorViewModel)
                     }
 
                     composable(Route.CourseList.route) {
