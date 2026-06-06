@@ -172,7 +172,7 @@ private fun CourseCard(course: CourseItem, onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = course.title)
             Text(text = "${course.subject} · Grade ${course.grade}")
-            if (course.description.isNotEmpty()) {
+            if (!course.description.isNullOrEmpty()) {
                 Text(text = course.description)
             }
         }

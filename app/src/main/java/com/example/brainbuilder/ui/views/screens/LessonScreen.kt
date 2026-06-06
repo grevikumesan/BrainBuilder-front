@@ -74,13 +74,13 @@ fun LessonScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(text = lesson.title)
-                    if (lesson.videoUrl.isNotEmpty()) {
+                    if (!lesson.videoUrl.isNullOrEmpty()) {
                         Text(text = "Video: ${lesson.videoUrl}")
                     }
-                    if (lesson.richTextContent.isNotEmpty()) {
+                    if (!lesson.richTextContent.isNullOrEmpty()) {
                         Text(text = lesson.richTextContent)
                     }
-                    if (lesson.summary.isNotEmpty()) {
+                    if (!lesson.summary.isNullOrEmpty()) {
                         Text(text = lesson.summary)
                     }
                     if (lesson.quiz != null) {

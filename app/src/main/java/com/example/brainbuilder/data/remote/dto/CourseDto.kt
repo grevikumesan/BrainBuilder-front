@@ -14,7 +14,8 @@ data class CourseItem(
     val subject: String,
     val grade: String,
     val title: String,
-    val description: String,
+    // nullable: courses.description is nullable in the DB
+    val description: String? = null,
     val createdAt: String
 )
 
@@ -32,12 +33,14 @@ data class LessonDetail(
     val id: String,
     val courseId: String,
     val title: String,
-    val videoUrl: String,
-    val richTextContent: String,
-    val summary: String,
-    val isPremium: Boolean,
-    val order: Int,
-    val quiz: QuizSummary?
+    // nullable: these lesson content fields are nullable in the DB and are
+    // also blanked/omitted by the backend when premium access is withheld
+    val videoUrl: String? = null,
+    val richTextContent: String? = null,
+    val summary: String? = null,
+    val isPremium: Boolean = false,
+    val order: Int = 0,
+    val quiz: QuizSummary? = null
 )
 
 data class QuizSummary(
