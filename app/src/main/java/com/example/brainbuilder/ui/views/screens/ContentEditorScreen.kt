@@ -2,6 +2,8 @@ package com.example.brainbuilder.ui.views.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +17,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -84,6 +87,7 @@ fun ContentEditorScreen(
                         value = uiState.title,
                         onValueChange = viewModel::updateTitle,
                         label = { Text("Course Title") },
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -136,15 +140,18 @@ fun ContentEditorScreen(
                     Button(
                         onClick = { viewModel.submit() },
                         enabled = !uiState.isSubmitting,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
                     ) {
                         if (uiState.isSubmitting) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(22.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 2.dp
                             )
                         } else {
-                            Text("Create Course")
+                            Text("Create Course", style = MaterialTheme.typography.labelLarge)
                         }
                     }
                 }
@@ -160,17 +167,20 @@ private fun LessonEditor(
     canRemove: Boolean,
     viewModel: ContentEditorViewModel
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "Lesson ${index + 1}",
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
                 if (canRemove) {
@@ -181,12 +191,14 @@ private fun LessonEditor(
                 value = lesson.title,
                 onValueChange = { value -> viewModel.updateLesson(index) { it.copy(title = value) } },
                 label = { Text("Lesson Title") },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = lesson.videoUrl,
                 onValueChange = { value -> viewModel.updateLesson(index) { it.copy(videoUrl = value) } },
                 label = { Text("Video URL (optional)") },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -235,7 +247,12 @@ private fun QuestionEditor(
     question: QuestionForm,
     viewModel: ContentEditorViewModel
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -277,6 +294,7 @@ private fun QuestionEditor(
                 value = question.correctAnswer,
                 onValueChange = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(correctAnswer = value) } },
                 label = { Text("Correct Answer") },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -289,6 +307,7 @@ private fun QuestionEditor(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun <T> OptionSelector(
     label: String,
@@ -299,13 +318,17 @@ private fun <T> OptionSelector(
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
-        options.forEach { option ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
+        Spacer(modifier = Modifier.height(6.dp))
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            options.forEach { option ->
+                FilterChip(
                     selected = option == selected,
-                    onClick = { onSelect(option) }
+                    onClick = { onSelect(option) },
+                    label = { Text(optionLabel(option)) }
                 )
-                Text(text = optionLabel(option))
             }
         }
     }
@@ -322,12 +345,27 @@ private fun CourseCreatedMessage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text("✅", style = MaterialTheme.typography.displayMedium)
+        Spacer(modifier = Modifier.height(12.dp))
         Text("Course submitted!", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Status: PENDING_APPROVAL", style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = "Status: Pending Approval",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
         Spacer(modifier = Modifier.height(4.dp))
-        Text("Course ID: $courseId", style = MaterialTheme.typography.bodySmall)
+        Text(
+            text = "Course ID: $courseId",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = onCreateAnother) { Text("Create Another Course") }
+        Button(
+            onClick = onCreateAnother,
+            modifier = Modifier.height(50.dp)
+        ) {
+            Text("Create Another Course", style = MaterialTheme.typography.labelLarge)
+        }
     }
 }
