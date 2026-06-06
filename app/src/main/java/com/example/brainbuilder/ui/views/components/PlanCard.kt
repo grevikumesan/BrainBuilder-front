@@ -16,16 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.PlanItem
-import java.text.NumberFormat
-import java.util.Locale
+import com.example.brainbuilder.util.formatRupiah
 
 @Composable
 fun PlanCard(
     plan: PlanItem,
     onPayNow: () -> Unit
 ) {
-    val formattedPrice = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-        .format(plan.price)
+    val formattedPrice = formatRupiah(plan.price)
 
     Card(
         modifier = Modifier.fillMaxWidth()

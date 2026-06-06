@@ -32,6 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.CourseItem
+import com.example.brainbuilder.ui.views.components.EmptyState
+import com.example.brainbuilder.ui.views.components.ErrorState
+import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 
 private val SUBJECTS = listOf("MATHEMATICS", "PHYSICS", "CHEMISTRY")
@@ -135,21 +138,9 @@ fun CourseListScreen(
             }
 
             when {
-                uiState.isLoading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-                uiState.errorMessage != null -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(uiState.errorMessage ?: "An error occurred")
-                    }
-                }
-                uiState.courses.isEmpty() -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No courses available for this filter.")
-                    }
-                }
+                uiState.isLoading -> LoadingIndicator()
+                uiState.errorMessage != null -> ErrorState(uiState.errorMessage ?: "An error occurred")
+                uiState.courses.isEmpty() -> EmptyState("No courses available for this filter.")
                 else -> {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(uiState.courses) { course ->

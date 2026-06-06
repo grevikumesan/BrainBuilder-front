@@ -158,7 +158,8 @@ class MainActivity : ComponentActivity() {
                             },
                             onSubscribeRequired = {
                                 navController.navigate(Route.Subscription.route)
-                            }
+                            },
+                            onBack = { navController.popBackStack() }
                         )
                     }
 

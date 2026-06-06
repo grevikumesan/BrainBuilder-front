@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.CourseDetailResponse
 import com.example.brainbuilder.data.remote.dto.CourseLesson
+import com.example.brainbuilder.ui.views.components.ErrorState
+import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,19 +77,9 @@ private fun RenderState(
     onLessonSelected: (String) -> Unit
 ) {
     when {
-        isLoading -> {
-            CircularProgressIndicator(modifier = Modifier.fillMaxSize())
-        }
-        errorMessage != null -> {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-        course != null -> {
-            CourseContent(course, onLessonSelected)
-        }
+        isLoading -> LoadingIndicator()
+        errorMessage != null -> ErrorState(errorMessage)
+        course != null -> CourseContent(course, onLessonSelected)
     }
 }
 
