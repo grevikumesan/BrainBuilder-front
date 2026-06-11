@@ -106,6 +106,8 @@ private fun ProgressContent(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        item { ProgressSummary(courses, scoreHistory, recommendedTopics) }
+
         item { SectionTitle("Course completion") }
         if (courses.isEmpty()) {
             item { EmptyHint("No courses started yet.") }
@@ -126,6 +128,52 @@ private fun ProgressContent(
         } else {
             items(recommendedTopics) { topic -> RecommendedTopicCard(topic) }
         }
+    }
+}
+
+@Composable
+private fun ProgressSummary(
+    courses: List<CourseProgress>,
+    scoreHistory: List<QuizScoreHistory>,
+    recommendedTopics: List<RecommendedTopic>
+) {
+    val avgScore = if (scoreHistory.isNotEmpty()) scoreHistory.map { it.score }.average().roundToInt() else 0
+    val lessonsDone = courses.sumOf { it.completedLessons }
+    val toReview = recommendedTopics.size
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                text = "Your learning at a glance",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                StatTile(modifier = Modifier.weight(1f), value = "$avgScore", label = "Avg score")
+                StatTile(modifier = Modifier.weight(1f), value = "$lessonsDone", label = "Lessons")
+                StatTile(modifier = Modifier.weight(1f), value = "$toReview", label = "To review")
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatTile(modifier: Modifier, value: String, label: String) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
     }
 }
 
