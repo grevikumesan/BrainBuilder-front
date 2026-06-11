@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
@@ -46,6 +47,7 @@ import com.example.brainbuilder.ui.uistate.LessonForm
 import com.example.brainbuilder.ui.uistate.QuestionForm
 import com.example.brainbuilder.ui.viewmodels.ContentEditorViewModel
 import com.example.brainbuilder.ui.views.components.LogoutAction
+import com.example.brainbuilder.ui.views.components.PrimaryButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +72,20 @@ fun ContentEditorScreen(
                 actions = { LogoutAction(onLogout = onLogout) }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            // Sticky submit so the teacher never has to scroll past every lesson to save
+            if (uiState.createdCourseId == null) {
+                Surface(shadowElevation = 8.dp) {
+                    PrimaryButton(
+                        text = "Create Course",
+                        onClick = { viewModel.submit() },
+                        loading = uiState.isSubmitting,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
     ) { padding ->
         val createdId = uiState.createdCourseId
         if (createdId != null) {
@@ -141,25 +156,6 @@ fun ContentEditorScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("+ Add Lesson")
-                    }
-                }
-                item {
-                    Button(
-                        onClick = { viewModel.submit() },
-                        enabled = !uiState.isSubmitting,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp)
-                    ) {
-                        if (uiState.isSubmitting) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(22.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text("Create Course", style = MaterialTheme.typography.labelLarge)
-                        }
                     }
                 }
             }
