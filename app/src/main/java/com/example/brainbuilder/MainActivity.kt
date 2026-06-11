@@ -144,7 +144,6 @@ class MainActivity : ComponentActivity() {
                     composable(Route.StudentHome.route) {
                         StudentShell(
                             courseViewModel = courseViewModel,
-                            progressViewModel = progressViewModel,
                             paymentViewModel = paymentViewModel,
                             onCourseSelected = { courseId ->
                                 navController.navigate(Route.CourseDetail.createRoute(courseId))
@@ -153,6 +152,7 @@ class MainActivity : ComponentActivity() {
                                 val encoded = java.net.URLEncoder.encode(paymentUrl, "UTF-8")
                                 navController.navigate(Route.Payment.createRoute(encoded))
                             },
+                            onOpenProgress = { navController.navigate(Route.Progress.route) },
                             onLogout = onLogout
                         )
                     }
