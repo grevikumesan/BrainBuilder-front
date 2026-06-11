@@ -41,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.SubscriptionStatus
 import com.example.brainbuilder.ui.viewmodels.PaymentViewModel
+import com.example.brainbuilder.ui.views.components.BackTopBar
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.views.components.PlanCard
 
@@ -71,16 +72,7 @@ fun SubscriptionScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Subscription") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        },
+        topBar = { BackTopBar(title = "Subscription", onBack = onBack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {

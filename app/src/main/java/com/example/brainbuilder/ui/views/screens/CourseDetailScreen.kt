@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.CourseDetailResponse
 import com.example.brainbuilder.data.remote.dto.CourseLesson
+import com.example.brainbuilder.ui.views.components.BackTopBar
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.CourseDetailViewModel
@@ -59,14 +60,7 @@ fun CourseDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Course Detail") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+            BackTopBar(title = "Course Detail", onBack = onBack)
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {

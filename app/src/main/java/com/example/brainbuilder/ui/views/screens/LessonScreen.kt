@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.LessonDetail
+import com.example.brainbuilder.ui.views.components.BackTopBar
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
@@ -57,14 +58,7 @@ fun LessonScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(uiState.selectedLesson?.title ?: "Lesson") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+            BackTopBar(title = uiState.selectedLesson?.title ?: "Lesson", onBack = onBack)
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {

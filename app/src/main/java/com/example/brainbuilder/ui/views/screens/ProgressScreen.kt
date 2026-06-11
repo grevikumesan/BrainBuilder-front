@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.CourseProgress
 import com.example.brainbuilder.data.remote.dto.QuizScoreHistory
 import com.example.brainbuilder.data.remote.dto.RecommendedTopic
+import com.example.brainbuilder.ui.views.components.BackTopBar
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.ProgressViewModel
@@ -59,14 +60,7 @@ fun ProgressScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("My Progress") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+            BackTopBar(title = "My Progress", onBack = onBack)
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {

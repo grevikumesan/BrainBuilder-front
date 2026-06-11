@@ -49,6 +49,7 @@ import com.example.brainbuilder.ui.uistate.QuizUiState
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.QuizViewModel
+import com.example.brainbuilder.ui.views.components.BackTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,14 +66,7 @@ fun QuizScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Quiz") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+            BackTopBar(title = "Quiz", onBack = onBack)
         }
     ) { paddingValues ->
         Box(
