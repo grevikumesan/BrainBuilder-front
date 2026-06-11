@@ -45,9 +45,7 @@ fun StudentShell(
                 StudentTab.HOME -> HomeScreen(onBrowse = { tab = StudentTab.COURSES })
                 StudentTab.COURSES -> CourseListScreen(
                     viewModel = courseViewModel,
-                    onCourseSelected = onCourseSelected,
-                    onOpenProgress = onOpenProgress,
-                    onLogout = onLogout
+                    onCourseSelected = onCourseSelected
                 )
                 StudentTab.PREMIUM -> SubscriptionScreen(
                     viewModel = paymentViewModel,

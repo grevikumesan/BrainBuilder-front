@@ -32,7 +32,6 @@ import com.example.brainbuilder.ui.viewmodels.QuizViewModelFactory
 import com.example.brainbuilder.ui.views.screen.AdminDashboardScreen
 import com.example.brainbuilder.ui.views.screen.ContentEditorScreen
 import com.example.brainbuilder.ui.views.screen.CourseDetailScreen
-import com.example.brainbuilder.ui.views.screen.CourseListScreen
 import com.example.brainbuilder.ui.views.screen.LessonScreen
 import com.example.brainbuilder.ui.views.screen.LoginScreen
 import com.example.brainbuilder.ui.views.screen.PaymentScreen
@@ -153,19 +152,6 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(Route.Payment.createRoute(encoded))
                             },
                             onOpenProgress = { navController.navigate(Route.Progress.route) },
-                            onLogout = onLogout
-                        )
-                    }
-
-                    composable(Route.CourseList.route) {
-                        CourseListScreen(
-                            viewModel = courseViewModel,
-                            onCourseSelected = { courseId ->
-                                navController.navigate(Route.CourseDetail.createRoute(courseId))
-                            },
-                            onOpenProgress = {
-                                navController.navigate(Route.Progress.route)
-                            },
                             onLogout = onLogout
                         )
                     }

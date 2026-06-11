@@ -29,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +45,6 @@ import com.example.brainbuilder.ui.views.components.AppearOnce
 import com.example.brainbuilder.ui.views.components.EmptyState
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
-import com.example.brainbuilder.ui.views.components.LogoutAction
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
 import com.example.brainbuilder.util.subjectEmoji
 
@@ -57,9 +55,7 @@ private val GRADES = listOf("X", "XI", "XII")
 @Composable
 fun CourseListScreen(
     viewModel: CourseViewModel,
-    onCourseSelected: (courseId: String) -> Unit,
-    onOpenProgress: () -> Unit,
-    onLogout: () -> Unit
+    onCourseSelected: (courseId: String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -69,12 +65,7 @@ fun CourseListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Courses") },
-                actions = {
-                    LogoutAction(onLogout = onLogout)
-                }
-            )
+            TopAppBar(title = { Text("Courses") })
         }
     ) { padding ->
         Column(
