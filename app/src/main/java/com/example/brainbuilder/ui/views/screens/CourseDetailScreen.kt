@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.brainbuilder.data.remote.dto.CourseDetailResponse
 import com.example.brainbuilder.data.remote.dto.CourseLesson
+import com.example.brainbuilder.ui.views.components.AppearOnce
 import com.example.brainbuilder.ui.views.components.BackTopBar
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
@@ -112,9 +113,11 @@ private fun CourseContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(course.lessons) { lesson ->
-                LessonItemCard(lesson = lesson) {
-                    onLessonSelected(lesson.id)
+            itemsIndexed(course.lessons) { index, lesson ->
+                AppearOnce(index = index) {
+                    LessonItemCard(lesson = lesson) {
+                        onLessonSelected(lesson.id)
+                    }
                 }
             }
         }

@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.CourseItem
+import com.example.brainbuilder.ui.views.components.AppearOnce
 import com.example.brainbuilder.ui.views.components.CircleBadge
 import com.example.brainbuilder.ui.views.components.EmptyState
 import com.example.brainbuilder.ui.views.components.LogoutAction
@@ -160,8 +161,10 @@ fun CourseListScreen(
                 uiState.courses.isEmpty() -> EmptyState("No courses available for this filter.")
                 else -> {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(uiState.courses) { course ->
-                            CourseCard(course = course, onClick = { onCourseSelected(course.id) })
+                        itemsIndexed(uiState.courses) { index, course ->
+                            AppearOnce(index = index) {
+                                CourseCard(course = course, onClick = { onCourseSelected(course.id) })
+                            }
                         }
                     }
                 }

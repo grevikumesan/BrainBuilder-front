@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.PendingCourseDto
 import com.example.brainbuilder.data.remote.dto.UserItemDto
+import com.example.brainbuilder.ui.views.components.AppearOnce
 import com.example.brainbuilder.ui.views.components.CircleBadge
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.views.components.LogoutAction
@@ -96,23 +97,27 @@ fun AdminDashboardScreen(
                     if (uiState.pendingCourses.isEmpty()) {
                         item { Hint("No courses awaiting approval.") }
                     } else {
-                        items(uiState.pendingCourses) { course ->
-                            PendingCourseCard(
-                                course = course,
-                                onApprove = { viewModel.approveCourse(course.id) },
-                                onReject = { rejectingCourse = course }
-                            )
+                        itemsIndexed(uiState.pendingCourses) { index, course ->
+                            AppearOnce(index = index) {
+                                PendingCourseCard(
+                                    course = course,
+                                    onApprove = { viewModel.approveCourse(course.id) },
+                                    onReject = { rejectingCourse = course }
+                                )
+                            }
                         }
                     }
 
                     item { SectionHeader("Users", uiState.users.size) }
-                    items(uiState.users) { user ->
-                        UserCard(
-                            user = user,
-                            onActivate = { viewModel.activateUser(user.id) },
-                            onSuspend = { viewModel.suspendUser(user.id) },
-                            onRemove = { viewModel.removeUser(user.id) }
-                        )
+                    itemsIndexed(uiState.users) { index, user ->
+                        AppearOnce(index = index) {
+                            UserCard(
+                                user = user,
+                                onActivate = { viewModel.activateUser(user.id) },
+                                onSuspend = { viewModel.suspendUser(user.id) },
+                                onRemove = { viewModel.removeUser(user.id) }
+                            )
+                        }
                     }
                 }
             }
