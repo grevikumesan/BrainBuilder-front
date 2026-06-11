@@ -84,6 +84,16 @@ class MainActivity : ComponentActivity() {
                     factory = ProgressViewModelFactory(appContainer.progressRepository)
                 )
 
+                // Clears the JWT and returns to login with the whole back stack wiped,
+                // so a logged-out user (or a role switch) can't navigate back into the app.
+                val onLogout: () -> Unit = {
+                    authViewModel.logout {
+                        navController.navigate(Route.Login.route) {
+                            popUpTo(navController.graph.id) { inclusive = true }
+                        }
+                    }
+                }
+
                 NavHost(
                     navController = navController,
                     startDestination = Route.Login.route
@@ -117,11 +127,17 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(Route.CreateCourse.route) {
-                        ContentEditorScreen(viewModel = contentEditorViewModel)
+                        ContentEditorScreen(
+                            viewModel = contentEditorViewModel,
+                            onLogout = onLogout
+                        )
                     }
 
                     composable(Route.AdminDashboard.route) {
-                        AdminDashboardScreen(viewModel = adminViewModel)
+                        AdminDashboardScreen(
+                            viewModel = adminViewModel,
+                            onLogout = onLogout
+                        )
                     }
 
                     composable(Route.CourseList.route) {
@@ -132,7 +148,8 @@ class MainActivity : ComponentActivity() {
                             },
                             onOpenProgress = {
                                 navController.navigate(Route.Progress.route)
-                            }
+                            },
+                            onLogout = onLogout
                         )
                     }
 
@@ -200,7 +217,8 @@ class MainActivity : ComponentActivity() {
                             onPayNow = { paymentUrl ->
                                 val encoded = java.net.URLEncoder.encode(paymentUrl, "UTF-8")
                                 navController.navigate(Route.Payment.createRoute(encoded))
-                            }
+                            },
+                            onBack = { navController.popBackStack() }
                         )
                     }
 

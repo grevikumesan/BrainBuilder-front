@@ -86,4 +86,15 @@ class AuthViewModel(
             }
         }
     }
+
+    fun logout(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            dataStore.clearToken()
+            // Reset auth state so the login screen reopens clean; a stale isSuccess=true
+            // would otherwise immediately auto-redirect back into the app.
+            _loginUiState.value = LoginUiState()
+            _registerUiState.value = RegisterUiState()
+            onComplete()
+        }
+    }
 }

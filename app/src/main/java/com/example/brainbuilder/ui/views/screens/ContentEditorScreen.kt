@@ -45,11 +45,13 @@ import com.example.brainbuilder.data.remote.dto.Subject
 import com.example.brainbuilder.ui.uistate.LessonForm
 import com.example.brainbuilder.ui.uistate.QuestionForm
 import com.example.brainbuilder.ui.viewmodels.ContentEditorViewModel
+import com.example.brainbuilder.ui.views.components.LogoutAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentEditorScreen(
-    viewModel: ContentEditorViewModel
+    viewModel: ContentEditorViewModel,
+    onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -62,7 +64,12 @@ fun ContentEditorScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Create Course") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Create Course") },
+                actions = { LogoutAction(onLogout = onLogout) }
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         val createdId = uiState.createdCourseId

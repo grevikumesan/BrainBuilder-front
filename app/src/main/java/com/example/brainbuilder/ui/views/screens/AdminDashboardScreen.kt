@@ -42,12 +42,14 @@ import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.PendingCourseDto
 import com.example.brainbuilder.data.remote.dto.UserItemDto
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
+import com.example.brainbuilder.ui.views.components.LogoutAction
 import com.example.brainbuilder.ui.viewmodels.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDashboardScreen(
     viewModel: AdminViewModel,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -60,7 +62,12 @@ fun AdminDashboardScreen(
     var rejectingCourse by remember { mutableStateOf<PendingCourseDto?>(null) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Moderation") }) }
+        topBar = {
+            TopAppBar(
+                title = { Text("Moderation") },
+                actions = { LogoutAction(onLogout = onLogout) }
+            )
+        }
     ) { padding ->
         Box(modifier = modifier.fillMaxSize().padding(padding)) {
             if (uiState.isLoading) {

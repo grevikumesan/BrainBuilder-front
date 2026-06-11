@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.CourseItem
 import com.example.brainbuilder.ui.views.components.EmptyState
+import com.example.brainbuilder.ui.views.components.LogoutAction
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
@@ -57,7 +58,8 @@ private val GRADES = listOf("X", "XI", "XII")
 fun CourseListScreen(
     viewModel: CourseViewModel,
     onCourseSelected: (courseId: String) -> Unit,
-    onOpenProgress: () -> Unit
+    onOpenProgress: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -74,6 +76,7 @@ fun CourseListScreen(
                 title = { Text("Courses") },
                 actions = {
                     TextButton(onClick = onOpenProgress) { Text("Progress") }
+                    LogoutAction(onLogout = onLogout)
                 }
             )
         }
