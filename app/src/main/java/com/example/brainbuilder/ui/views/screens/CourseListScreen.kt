@@ -44,11 +44,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.CourseItem
+import com.example.brainbuilder.ui.views.components.CircleBadge
 import com.example.brainbuilder.ui.views.components.EmptyState
 import com.example.brainbuilder.ui.views.components.LogoutAction
 import com.example.brainbuilder.ui.views.components.ErrorState
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.viewmodels.CourseViewModel
+import com.example.brainbuilder.util.subjectEmoji
 
 private val SUBJECTS = listOf("MATHEMATICS", "PHYSICS", "CHEMISTRY")
 private val GRADES = listOf("X", "XI", "XII")
@@ -183,13 +185,7 @@ private fun CourseCard(course: CourseItem, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
+            CircleBadge(size = 52.dp) {
                 Text(text = subjectEmoji(course.subject), fontSize = 26.sp)
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -223,11 +219,4 @@ private fun CourseCard(course: CourseItem, onClick: () -> Unit) {
             )
         }
     }
-}
-
-private fun subjectEmoji(subject: String): String = when (subject.uppercase()) {
-    "MATHEMATICS" -> "🧮"
-    "PHYSICS" -> "🔬"
-    "CHEMISTRY" -> "🧪"
-    else -> "📘"
 }

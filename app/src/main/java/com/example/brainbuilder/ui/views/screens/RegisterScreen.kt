@@ -44,6 +44,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.ui.viewmodels.AuthViewModel
+import com.example.brainbuilder.ui.views.components.AuthHeader
+import com.example.brainbuilder.ui.views.components.PrimaryButton
 
 @Composable
 fun RegisterScreen(
@@ -67,7 +69,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AuthBrandHeader(
+        AuthHeader(
             title = "Create your account",
             subtitle = "Start learning science the fun way"
         )
@@ -147,55 +149,15 @@ fun RegisterScreen(
             Spacer(Modifier.height(12.dp))
         }
 
-        Button(
+        PrimaryButton(
+            text = "Create account",
             onClick = viewModel::register,
-            enabled = !uiState.isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(22.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Text("Create account", style = MaterialTheme.typography.labelLarge)
-            }
-        }
+            loading = uiState.isLoading
+        )
         Spacer(Modifier.height(8.dp))
 
         TextButton(onClick = onNavigateToLogin) {
             Text("Already have an account? Log in")
         }
-    }
-}
-
-@Composable
-private fun AuthBrandHeader(title: String, subtitle: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(88.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("🧠", fontSize = 44.sp)
-        }
-        Spacer(Modifier.height(20.dp))
-        Text(
-            text = "Brain Builder",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(Modifier.height(4.dp))
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }

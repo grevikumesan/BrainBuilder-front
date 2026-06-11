@@ -41,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.brainbuilder.data.remote.dto.PendingCourseDto
 import com.example.brainbuilder.data.remote.dto.UserItemDto
+import com.example.brainbuilder.ui.views.components.CircleBadge
 import com.example.brainbuilder.ui.views.components.LoadingIndicator
 import com.example.brainbuilder.ui.views.components.LogoutAction
+import com.example.brainbuilder.ui.views.components.Pill
 import com.example.brainbuilder.ui.viewmodels.AdminViewModel
+import com.example.brainbuilder.util.subjectEmoji
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -161,13 +164,7 @@ private fun PendingCourseCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
+                CircleBadge(size = 44.dp) {
                     Text(text = subjectEmoji(course.subject), fontSize = 22.sp)
                 }
                 Column(modifier = Modifier.weight(1f)) {
@@ -204,12 +201,9 @@ private fun UserCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.secondaryContainer),
-                    contentAlignment = Alignment.Center
+                CircleBadge(
+                    size = 44.dp,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
                         text = user.name.firstOrNull()?.uppercase() ?: "?",
@@ -228,8 +222,16 @@ private fun UserCard(
             }
             Spacer(Modifier.height(10.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatusBadge(text = user.role, active = false)
-                StatusBadge(text = user.status, active = user.status.equals("ACTIVE", ignoreCase = true))
+                Pill(text = user.role)
+                if (user.status.equals("ACTIVE", ignoreCase = true)) {
+                    Pill(
+                        text = user.status,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                } else {
+                    Pill(text = user.status)
+                }
             }
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -238,20 +240,6 @@ private fun UserCard(
                 OutlinedButton(onClick = onRemove) { Text("Remove") }
             }
         }
-    }
-}
-
-@Composable
-private fun StatusBadge(text: String, active: Boolean) {
-    val container = if (active) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant
-    val content = if (active) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-    Box(
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.small)
-            .background(container)
-            .padding(horizontal = 10.dp, vertical = 4.dp)
-    ) {
-        Text(text = text, style = MaterialTheme.typography.labelMedium, color = content)
     }
 }
 
@@ -287,11 +275,4 @@ private fun RejectCourseDialog(
             TextButton(onClick = onDismiss) { Text("Cancel") }
         }
     )
-}
-
-private fun subjectEmoji(subject: String): String = when (subject.uppercase()) {
-    "MATHEMATICS" -> "🧮"
-    "PHYSICS" -> "🔬"
-    "CHEMISTRY" -> "🧪"
-    else -> "📘"
 }
