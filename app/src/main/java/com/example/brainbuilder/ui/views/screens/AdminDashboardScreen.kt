@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -64,6 +65,8 @@ fun AdminDashboardScreen(
 
     // Course pending rejection — holds the target while the admin types a reason
     var rejectingCourse by remember { mutableStateOf<PendingCourseDto?>(null) }
+    // One list at a time keeps the admin usable on a small phone screen
+    var showPending by remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
@@ -77,46 +80,72 @@ fun AdminDashboardScreen(
             if (uiState.isLoading) {
                 LoadingIndicator()
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = showPending,
+                            onClick = { showPending = true },
+                            label = { Text("Pending (${uiState.pendingCourses.size})") }
+                        )
+                        FilterChip(
+                            selected = !showPending,
+                            onClick = { showPending = false },
+                            label = { Text("Users (${uiState.users.size})") }
+                        )
+                    }
+
                     if (uiState.hasError) {
-                        item {
-                            Text(uiState.errorMessage, color = MaterialTheme.colorScheme.error)
-                        }
+                        Text(
+                            text = uiState.errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
                     }
                     if (uiState.actionSuccessMessage.isNotEmpty()) {
-                        item {
-                            Text(uiState.actionSuccessMessage, color = MaterialTheme.colorScheme.primary)
-                        }
+                        Text(
+                            text = uiState.actionSuccessMessage,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
                     }
 
-                    item { SectionHeader("Pending courses", uiState.pendingCourses.size) }
-                    if (uiState.pendingCourses.isEmpty()) {
-                        item { Hint("No courses awaiting approval.") }
-                    } else {
-                        itemsIndexed(uiState.pendingCourses) { index, course ->
-                            AppearOnce(index = index) {
-                                PendingCourseCard(
-                                    course = course,
-                                    onApprove = { viewModel.approveCourse(course.id) },
-                                    onReject = { rejectingCourse = course }
-                                )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (showPending) {
+                            if (uiState.pendingCourses.isEmpty()) {
+                                item { Hint("No courses awaiting approval.") }
+                            } else {
+                                itemsIndexed(uiState.pendingCourses) { index, course ->
+                                    AppearOnce(index = index) {
+                                        PendingCourseCard(
+                                            course = course,
+                                            onApprove = { viewModel.approveCourse(course.id) },
+                                            onReject = { rejectingCourse = course }
+                                        )
+                                    }
+                                }
                             }
-                        }
-                    }
-
-                    item { SectionHeader("Users", uiState.users.size) }
-                    itemsIndexed(uiState.users) { index, user ->
-                        AppearOnce(index = index) {
-                            UserCard(
-                                user = user,
-                                onActivate = { viewModel.activateUser(user.id) },
-                                onSuspend = { viewModel.suspendUser(user.id) },
-                                onRemove = { viewModel.removeUser(user.id) }
-                            )
+                        } else {
+                            if (uiState.users.isEmpty()) {
+                                item { Hint("No users found.") }
+                            } else {
+                                itemsIndexed(uiState.users) { index, user ->
+                                    AppearOnce(index = index) {
+                                        UserCard(
+                                            user = user,
+                                            onActivate = { viewModel.activateUser(user.id) },
+                                            onSuspend = { viewModel.suspendUser(user.id) },
+                                            onRemove = { viewModel.removeUser(user.id) }
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
