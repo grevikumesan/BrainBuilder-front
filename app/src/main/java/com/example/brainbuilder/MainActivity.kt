@@ -39,6 +39,7 @@ import com.example.brainbuilder.ui.views.screen.PaymentScreen
 import com.example.brainbuilder.ui.views.screen.ProgressScreen
 import com.example.brainbuilder.ui.views.screen.QuizScreen
 import com.example.brainbuilder.ui.views.screen.RegisterScreen
+import com.example.brainbuilder.ui.views.screen.StudentShell
 import com.example.brainbuilder.ui.views.screen.SubscriptionScreen
 
 class MainActivity : ComponentActivity() {
@@ -108,7 +109,7 @@ class MainActivity : ComponentActivity() {
                                 val destination = when (role) {
                                     "TEACHER" -> Route.CreateCourse.route
                                     "ADMIN" -> Route.AdminDashboard.route
-                                    else -> Route.CourseList.route
+                                    else -> Route.StudentHome.route
                                 }
                                 navController.navigate(destination) {
                                     popUpTo(Route.Login.route) { inclusive = true }
@@ -136,6 +137,22 @@ class MainActivity : ComponentActivity() {
                     composable(Route.AdminDashboard.route) {
                         AdminDashboardScreen(
                             viewModel = adminViewModel,
+                            onLogout = onLogout
+                        )
+                    }
+
+                    composable(Route.StudentHome.route) {
+                        StudentShell(
+                            courseViewModel = courseViewModel,
+                            progressViewModel = progressViewModel,
+                            paymentViewModel = paymentViewModel,
+                            onCourseSelected = { courseId ->
+                                navController.navigate(Route.CourseDetail.createRoute(courseId))
+                            },
+                            onPayNow = { paymentUrl ->
+                                val encoded = java.net.URLEncoder.encode(paymentUrl, "UTF-8")
+                                navController.navigate(Route.Payment.createRoute(encoded))
+                            },
                             onLogout = onLogout
                         )
                     }
@@ -234,7 +251,7 @@ class MainActivity : ComponentActivity() {
                             paymentUrl = decoded,
                             viewModel = paymentViewModel,
                             onPaymentComplete = {
-                                navController.popBackStack(Route.Subscription.route, false)
+                                navController.popBackStack()
                             }
                         )
                     }

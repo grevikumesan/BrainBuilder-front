@@ -11,7 +11,7 @@ import com.example.brainbuilder.R
 // Fredoka (downloadable Google font) gives the rounded, friendly brand voice. A single
 // Regular face is enough — Compose emphasizes weight for headings, and falls back to the
 // system font if the download is unavailable, so it can never block rendering.
-val Fredoka = FontFamily(Font(R.font.fredoka))
+val Fredoka = FontFamily(Font(R.font.fredoka_regular))
 
 val Typography = Typography(
     headlineMedium = TextStyle(

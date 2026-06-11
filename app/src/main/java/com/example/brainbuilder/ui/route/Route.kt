@@ -9,6 +9,7 @@ sealed class Route(val route: String) {
     }
     object CreateCourse : Route("create_course")
     object AdminDashboard : Route("admin_dashboard")
+    object StudentHome : Route("student_home")
     object CourseList : Route("course_list")
     object Progress : Route("progress")
     object Lesson : Route("lesson/{lessonId}") {
