@@ -8,45 +8,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
-    primary = BrandBlue,
+    primary = ElectricBlue,
     onPrimary = Color.White,
-    primaryContainer = BrandBlueLight,
-    onPrimaryContainer = BrandBlueDark,
-    secondary = AccentTeal,
+    primaryContainer = ElectricBlueContainer,
+    onPrimaryContainer = ElectricBlueOnContainer,
+    secondary = LimePop,
     onSecondary = Color.White,
-    secondaryContainer = AccentTealLight,
-    onSecondaryContainer = Color(0xFF064E3B),
-    tertiary = AccentAmber,
+    secondaryContainer = LimeContainer,
+    onSecondaryContainer = LimeOnContainer,
+    tertiary = SparkOrange,
     onTertiary = Color.White,
-    background = NeutralCloud,
-    onBackground = NeutralInk,
-    surface = NeutralSurface,
-    onSurface = NeutralInk,
-    surfaceVariant = NeutralSurfaceVariant,
-    onSurfaceVariant = NeutralSlate,
-    outline = NeutralOutline,
-    error = NeutralError,
+    tertiaryContainer = SparkOrangeContainer,
+    onTertiaryContainer = SparkOrangeOnContainer,
+    background = CanvasLight,
+    onBackground = InkLight,
+    surface = SurfaceLight,
+    onSurface = InkLight,
+    surfaceVariant = SurfaceVariantLight,
+    onSurfaceVariant = SlateLight,
+    outline = OutlineLight,
+    outlineVariant = SurfaceVariantLight,
+    error = ErrorRed,
     onError = Color.White
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = BrandBlueOnDark,
-    onPrimary = Color(0xFF0B1020),
-    primaryContainer = BrandBlueDark,
-    onPrimaryContainer = BrandBlueLight,
-    secondary = AccentTeal,
-    onSecondary = Color(0xFF02281D),
-    secondaryContainer = Color(0xFF0B3D2E),
-    onSecondaryContainer = AccentTealLight,
-    tertiary = AccentAmber,
-    onTertiary = Color(0xFF3A1A00),
-    background = DarkBg,
-    onBackground = DarkInk,
-    surface = DarkSurface,
-    onSurface = DarkInk,
-    surfaceVariant = DarkSurfaceVariant,
-    onSurfaceVariant = DarkSlate,
-    outline = DarkOutline,
+    primary = ElectricBlueOnDark,
+    onPrimary = ElectricBlueOnContainer,
+    primaryContainer = ElectricBlueContainerDark,
+    onPrimaryContainer = ElectricBlueContainer,
+    secondary = LimeContainer,
+    onSecondary = LimeOnContainer,
+    secondaryContainer = LimeContainerDark,
+    onSecondaryContainer = LimeContainer,
+    tertiary = SparkOrangeDark,
+    onTertiary = SparkOrangeOnContainer,
+    tertiaryContainer = SparkOrangeOnContainer,
+    onTertiaryContainer = SparkOrangeContainer,
+    background = CanvasDark,
+    onBackground = InkDark,
+    surface = SurfaceDark,
+    onSurface = InkDark,
+    surfaceVariant = SurfaceVariantDark,
+    onSurfaceVariant = SlateDark,
+    outline = OutlineDark,
+    outlineVariant = SurfaceVariantDark,
     error = Color(0xFFFF6B6B),
     onError = Color(0xFF2A0A0A)
 )
@@ -56,8 +62,8 @@ fun BrainBuilderTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // Dynamic color is intentionally off: a learning brand needs a consistent,
-    // recognizable identity rather than the device wallpaper palette.
+    // Dynamic color is intentionally off (MD3 allows static schemes): a learning brand
+    // needs one consistent, recognizable identity, not the device wallpaper palette.
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(

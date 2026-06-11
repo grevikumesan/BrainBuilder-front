@@ -2,30 +2,38 @@ package com.example.brainbuilder.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Brand palette — Brilliant-inspired: a confident blue with friendly accents.
+// Playful Edu-Energetic palette — electric blue dominant with an acid-lime pop and a
+// warm orange spark. Defined here once; screens consume only via MaterialTheme tokens.
 
-val BrandBlue = Color(0xFF3D5AFE)
-val BrandBlueDark = Color(0xFF2A3EB1)
-val BrandBlueLight = Color(0xFFE3E7FF)
+// Light
+val ElectricBlue = Color(0xFF3A5BFF)
+val ElectricBlueContainer = Color(0xFFDEE5FF)
+val ElectricBlueOnContainer = Color(0xFF101F66)
 
-val AccentTeal = Color(0xFF12B886)        // positive / correct
-val AccentTealLight = Color(0xFFD6F5EA)
-val AccentAmber = Color(0xFFFF8A3D)       // highlight / streak
+val LimePop = Color(0xFF5B7A0E)            // readable solid for `secondary`
+val LimeContainer = Color(0xFFDBF7A3)      // the bright "pop" surface
+val LimeOnContainer = Color(0xFF273600)
 
-// Neutrals (light)
-val NeutralInk = Color(0xFF161A2B)        // primary text
-val NeutralSlate = Color(0xFF5B6178)      // secondary text
-val NeutralCloud = Color(0xFFF5F7FB)      // app background
-val NeutralSurface = Color(0xFFFFFFFF)
-val NeutralSurfaceVariant = Color(0xFFEEF1F8)
-val NeutralOutline = Color(0xFFC9D0E0)
-val NeutralError = Color(0xFFE5484D)
+val SparkOrange = Color(0xFFFF7A1A)        // tertiary accent / highlights
+val SparkOrangeContainer = Color(0xFFFFE3CC)
+val SparkOrangeOnContainer = Color(0xFF4A2200)
 
-// Neutrals (dark)
-val DarkBg = Color(0xFF0F1424)
-val DarkSurface = Color(0xFF1A2138)
-val DarkSurfaceVariant = Color(0xFF222B45)
-val DarkInk = Color(0xFFECEEF5)
-val DarkSlate = Color(0xFFAEB6CC)
-val DarkOutline = Color(0xFF38415C)
-val BrandBlueOnDark = Color(0xFF9AA8FF)
+val InkLight = Color(0xFF14182B)
+val SlateLight = Color(0xFF5A6072)
+val CanvasLight = Color(0xFFF6F8FF)        // cool blue-tinted background
+val SurfaceLight = Color(0xFFFFFFFF)
+val SurfaceVariantLight = Color(0xFFE9EDFB)
+val OutlineLight = Color(0xFFC2C8DD)
+val ErrorRed = Color(0xFFE5484D)
+
+// Dark
+val ElectricBlueOnDark = Color(0xFFAEB9FF)
+val ElectricBlueContainerDark = Color(0xFF2638A6)
+val LimeContainerDark = Color(0xFF3B4D00)
+val SparkOrangeDark = Color(0xFFFF9D52)
+val InkDark = Color(0xFFECEEFB)
+val SlateDark = Color(0xFFB3BAD2)
+val CanvasDark = Color(0xFF0E1326)
+val SurfaceDark = Color(0xFF161B33)
+val SurfaceVariantDark = Color(0xFF232A47)
+val OutlineDark = Color(0xFF3A4366)
