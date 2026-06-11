@@ -72,7 +72,6 @@ fun CourseListScreen(
             TopAppBar(
                 title = { Text("Courses") },
                 actions = {
-                    TextButton(onClick = onOpenProgress) { Text("Progress") }
                     LogoutAction(onLogout = onLogout)
                 }
             )
