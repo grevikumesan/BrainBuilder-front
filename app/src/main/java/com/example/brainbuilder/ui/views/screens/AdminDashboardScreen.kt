@@ -17,9 +17,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -269,9 +271,26 @@ private fun UserCard(
             }
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onActivate) { Text("Activate") }
-                OutlinedButton(onClick = onSuspend) { Text("Suspend") }
-                OutlinedButton(onClick = onRemove) { Text("Remove") }
+                val compact = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                Button(
+                    onClick = onActivate,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = compact
+                ) { Text("Activate", maxLines = 1) }
+                FilledTonalButton(
+                    onClick = onSuspend,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = compact
+                ) { Text("Suspend", maxLines = 1) }
+                FilledTonalButton(
+                    onClick = onRemove,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = compact,
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) { Text("Remove", maxLines = 1) }
             }
         }
     }
