@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -84,6 +88,10 @@ class MainActivity : ComponentActivity() {
                     factory = ProgressViewModelFactory(appContainer.progressRepository)
                 )
 
+                // Remembers the logged-in role so shared drill-down screens (e.g. the quiz)
+                // can switch to read-only preview for ADMIN/TEACHER instead of letting them attempt.
+                var currentRole by rememberSaveable { mutableStateOf("") }
+
                 // Clears the JWT and returns to login with the whole back stack wiped,
                 // so a logged-out user (or a role switch) can't navigate back into the app.
                 val onLogout: () -> Unit = {
@@ -105,6 +113,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(Route.Register.route)
                             },
                             onLoginSuccess = { role ->
+                                currentRole = role
                                 val destination = when (role) {
                                     "TEACHER" -> Route.CreateCourse.route
                                     "ADMIN" -> Route.AdminDashboard.route
@@ -196,7 +205,9 @@ class MainActivity : ComponentActivity() {
                         QuizScreen(
                             lessonId = lessonId,
                             viewModel = quizViewModel,
-                            onBack = { navController.popBackStack() }
+                            onBack = { navController.popBackStack() },
+                            // ADMIN/TEACHER only preview the quiz; they don't attempt it
+                            readOnly = currentRole != "STUDENT"
                         )
                     }
 

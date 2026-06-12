@@ -56,7 +56,8 @@ import com.example.brainbuilder.ui.views.components.BackTopBar
 fun QuizScreen(
     lessonId: String,
     viewModel: QuizViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    readOnly: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -90,6 +91,7 @@ fun QuizScreen(
                 )
                 uiState.questions.isNotEmpty() -> QuizFormView(
                     uiState = uiState,
+                    readOnly = readOnly,
                     onAnswerChanged = { questionId, answer -> viewModel.setAnswer(questionId, answer) },
                     onSubmit = { viewModel.gradeQuiz() }
                 )
@@ -101,6 +103,7 @@ fun QuizScreen(
 @Composable
 private fun QuizFormView(
     uiState: QuizUiState,
+    readOnly: Boolean,
     onAnswerChanged: (String, String) -> Unit,
     onSubmit: () -> Unit
 ) {
@@ -115,20 +118,36 @@ private fun QuizFormView(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column {
-            Text(
-                text = "$answered of $total answered",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(Modifier.height(6.dp))
-            LinearProgressIndicator(
-                progress = { if (total == 0) 0f else answered / total.toFloat() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(MaterialTheme.shapes.small)
-            )
+        if (readOnly) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                )
+            ) {
+                Text(
+                    text = "👁  Preview only — students attempt this quiz.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    modifier = Modifier.padding(14.dp)
+                )
+            }
+        } else {
+            Column {
+                Text(
+                    text = "$answered of $total answered",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(6.dp))
+                LinearProgressIndicator(
+                    progress = { if (total == 0) 0f else answered / total.toFloat() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(MaterialTheme.shapes.small)
+                )
+            }
         }
 
         uiState.questions.forEachIndexed { index, question ->
@@ -136,18 +155,21 @@ private fun QuizFormView(
                 index = index + 1,
                 question = question,
                 selectedAnswer = uiState.answers[question.id],
-                onAnswerChanged = { answer -> onAnswerChanged(question.id, answer) }
+                // In preview mode the options are shown but not selectable/submittable
+                onAnswerChanged = { answer -> if (!readOnly) onAnswerChanged(question.id, answer) }
             )
         }
 
-        Button(
-            onClick = onSubmit,
-            enabled = canSubmit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-        ) {
-            Text("Submit Quiz", style = MaterialTheme.typography.labelLarge)
+        if (!readOnly) {
+            Button(
+                onClick = onSubmit,
+                enabled = canSubmit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+            ) {
+                Text("Submit Quiz", style = MaterialTheme.typography.labelLarge)
+            }
         }
     }
 }

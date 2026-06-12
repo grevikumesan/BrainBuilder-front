@@ -115,7 +115,7 @@ private fun CourseContent(
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             itemsIndexed(course.lessons) { index, lesson ->
                 AppearOnce(index = index) {
-                    LessonItemCard(lesson = lesson) {
+                    LessonItemCard(lesson = lesson, number = index + 1) {
                         onLessonSelected(lesson.id)
                     }
                 }
@@ -127,6 +127,7 @@ private fun CourseContent(
 @Composable
 private fun LessonItemCard(
     lesson: CourseLesson,
+    number: Int,
     onClick: () -> Unit
 ) {
     val isLocked = lesson.isPremium && lesson.videoUrl == null
@@ -152,7 +153,7 @@ private fun LessonItemCard(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "${lesson.order}",
+                    text = "$number",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
