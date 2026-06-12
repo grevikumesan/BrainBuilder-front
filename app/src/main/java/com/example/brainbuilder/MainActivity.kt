@@ -136,7 +136,10 @@ class MainActivity : ComponentActivity() {
                     composable(Route.AdminDashboard.route) {
                         AdminDashboardScreen(
                             viewModel = adminViewModel,
-                            onLogout = onLogout
+                            onLogout = onLogout,
+                            onPreviewCourse = { courseId ->
+                                navController.navigate(Route.CourseDetail.createRoute(courseId))
+                            }
                         )
                     }
 

@@ -1,6 +1,8 @@
 package com.example.brainbuilder.ui.views.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,7 @@ import com.example.brainbuilder.util.subjectEmoji
 fun AdminDashboardScreen(
     viewModel: AdminViewModel,
     onLogout: () -> Unit,
+    onPreviewCourse: (courseId: String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -69,6 +72,9 @@ fun AdminDashboardScreen(
     var rejectingCourse by remember { mutableStateOf<PendingCourseDto?>(null) }
     // One list at a time keeps the admin usable on a small phone screen
     var showPending by remember { mutableStateOf(true) }
+    // Secondary filters: user status, and course subject
+    var userFilter by remember { mutableStateOf("ALL") }
+    var courseFilter by remember { mutableStateOf("ALL") }
 
     Scaffold(
         topBar = {
@@ -99,6 +105,28 @@ fun AdminDashboardScreen(
                         )
                     }
 
+                    // Secondary filter: subject for courses, status for users
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val chips = if (showPending) {
+                            listOf("ALL" to "All", "MATHEMATICS" to "Math", "PHYSICS" to "Physics", "CHEMISTRY" to "Chemistry")
+                        } else {
+                            listOf("ALL" to "All", "ACTIVE" to "Active", "SUSPENDED" to "Suspended")
+                        }
+                        val current = if (showPending) courseFilter else userFilter
+                        chips.forEach { (value, label) ->
+                            FilterChip(
+                                selected = current == value,
+                                onClick = { if (showPending) courseFilter = value else userFilter = value },
+                                label = { Text(label) }
+                            )
+                        }
+                    }
+
                     if (uiState.hasError) {
                         Text(
                             text = uiState.errorMessage,
@@ -114,36 +142,41 @@ fun AdminDashboardScreen(
                         )
                     }
 
+                    val visibleCourses = if (courseFilter == "ALL") uiState.pendingCourses
+                        else uiState.pendingCourses.filter { it.subject.equals(courseFilter, ignoreCase = true) }
+                    val visibleUsers = if (userFilter == "ALL") uiState.users
+                        else uiState.users.filter { it.status.equals(userFilter, ignoreCase = true) }
+
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         if (showPending) {
-                            if (uiState.pendingCourses.isEmpty()) {
-                                item { Hint("No courses awaiting approval.") }
+                            if (visibleCourses.isEmpty()) {
+                                item { Hint("No courses match this filter.") }
                             } else {
-                                itemsIndexed(uiState.pendingCourses) { index, course ->
+                                itemsIndexed(visibleCourses) { index, course ->
                                     AppearOnce(index = index) {
                                         PendingCourseCard(
                                             course = course,
                                             onApprove = { viewModel.approveCourse(course.id) },
-                                            onReject = { rejectingCourse = course }
+                                            onReject = { rejectingCourse = course },
+                                            onPreview = { onPreviewCourse(course.id) }
                                         )
                                     }
                                 }
                             }
                         } else {
-                            if (uiState.users.isEmpty()) {
-                                item { Hint("No users found.") }
+                            if (visibleUsers.isEmpty()) {
+                                item { Hint("No users match this filter.") }
                             } else {
-                                itemsIndexed(uiState.users) { index, user ->
+                                itemsIndexed(visibleUsers) { index, user ->
                                     AppearOnce(index = index) {
                                         UserCard(
                                             user = user,
                                             onActivate = { viewModel.activateUser(user.id) },
-                                            onSuspend = { viewModel.suspendUser(user.id) },
-                                            onRemove = { viewModel.removeUser(user.id) }
+                                            onSuspend = { viewModel.suspendUser(user.id) }
                                         )
                                     }
                                 }
@@ -189,7 +222,8 @@ private fun Hint(text: String) {
 private fun PendingCourseCard(
     course: PendingCourseDto,
     onApprove: () -> Unit,
-    onReject: () -> Unit
+    onReject: () -> Unit,
+    onPreview: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -213,9 +247,21 @@ private fun PendingCourseCard(
                 }
             }
             Spacer(Modifier.height(12.dp))
+            // Admin reviews the actual lessons/content before deciding
+            OutlinedButton(
+                onClick = onPreview,
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("👁  Preview content") }
+            Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onApprove) { Text("Approve") }
-                OutlinedButton(onClick = onReject) { Text("Reject") }
+                Button(
+                    onClick = onApprove,
+                    modifier = Modifier.weight(1f)
+                ) { Text("Approve") }
+                OutlinedButton(
+                    onClick = onReject,
+                    modifier = Modifier.weight(1f)
+                ) { Text("Reject") }
             }
         }
     }
@@ -225,8 +271,7 @@ private fun PendingCourseCard(
 private fun UserCard(
     user: UserItemDto,
     onActivate: () -> Unit,
-    onSuspend: () -> Unit,
-    onRemove: () -> Unit
+    onSuspend: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -259,38 +304,38 @@ private fun UserCard(
             Spacer(Modifier.height(10.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Pill(text = user.role)
-                if (user.status.equals("ACTIVE", ignoreCase = true)) {
-                    Pill(
+                when {
+                    user.status.equals("ACTIVE", ignoreCase = true) -> Pill(
                         text = user.status,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                } else {
-                    Pill(text = user.status)
+                    user.status.equals("SUSPENDED", ignoreCase = true) -> Pill(
+                        text = user.status,
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    else -> Pill(text = user.status)
                 }
             }
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                val compact = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                val compact = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
                 Button(
                     onClick = onActivate,
                     modifier = Modifier.weight(1f),
                     contentPadding = compact
                 ) { Text("Activate", maxLines = 1) }
+                // Suspend = caution (orange/tertiary), not green — clearer semantics
                 FilledTonalButton(
                     onClick = onSuspend,
                     modifier = Modifier.weight(1f),
-                    contentPadding = compact
-                ) { Text("Suspend", maxLines = 1) }
-                FilledTonalButton(
-                    onClick = onRemove,
-                    modifier = Modifier.weight(1f),
                     contentPadding = compact,
                     colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     )
-                ) { Text("Remove", maxLines = 1) }
+                ) { Text("Suspend", maxLines = 1) }
             }
         }
     }
