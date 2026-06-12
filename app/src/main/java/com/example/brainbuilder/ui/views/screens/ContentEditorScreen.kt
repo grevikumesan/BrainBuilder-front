@@ -285,21 +285,54 @@ private fun QuestionEditor(
                 label = { Text("Prompt") },
                 modifier = Modifier.fillMaxWidth()
             )
-            if (question.type == QuestionType.MULTIPLE_CHOICE) {
-                OutlinedTextField(
-                    value = question.optionsText,
-                    onValueChange = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(optionsText = value) } },
-                    label = { Text("Options (comma-separated)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            when (question.type) {
+                QuestionType.MULTIPLE_CHOICE -> {
+                    OutlinedTextField(
+                        value = question.optionsText,
+                        onValueChange = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(optionsText = value) } },
+                        label = { Text("Options (comma-separated)") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    // Pick the correct answer from the options the teacher typed, so it can
+                    // never mismatch what the student selects.
+                    val options = question.optionsText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                    if (options.isEmpty()) {
+                        Text(
+                            text = "Add options above, then pick the correct one.",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        OptionSelector(
+                            label = "Correct answer",
+                            options = options,
+                            selected = question.correctAnswer,
+                            optionLabel = { it },
+                            onSelect = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(correctAnswer = value) } }
+                        )
+                    }
+                }
+                // True/False: pick the correct answer so it always matches what the
+                // student selects ("True"/"False") — no fragile free-text typing.
+                QuestionType.TRUE_FALSE -> {
+                    OptionSelector(
+                        label = "Correct answer",
+                        options = listOf("True", "False"),
+                        selected = question.correctAnswer,
+                        optionLabel = { it },
+                        onSelect = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(correctAnswer = value) } }
+                    )
+                }
+                QuestionType.SHORT_ANSWER -> {
+                    OutlinedTextField(
+                        value = question.correctAnswer,
+                        onValueChange = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(correctAnswer = value) } },
+                        label = { Text("Correct answer") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
-            OutlinedTextField(
-                value = question.correctAnswer,
-                onValueChange = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(correctAnswer = value) } },
-                label = { Text("Correct Answer") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
             OutlinedTextField(
                 value = question.explanationText,
                 onValueChange = { value -> viewModel.updateQuestion(lessonIndex, questionIndex) { it.copy(explanationText = value) } },
