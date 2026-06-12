@@ -18,28 +18,22 @@ class QuizViewModel(
 
     fun loadQuiz(lessonId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            // Start from a FRESH state every time. This ViewModel instance is shared
+            // across lessons, so reusing copy() would leak the previous quiz's answers,
+            // score, and isSubmitted flag into this lesson — making a new quiz look
+            // already-answered / showing the wrong result.
+            _uiState.value = QuizUiState(isLoading = true)
             try {
                 // The quiz (id + questions) arrives inside the lesson detail
                 val response = quizRepository.getLesson(lessonId)
                 val quiz = response.body()?.data?.lesson?.quiz
                 if (response.isSuccessful && quiz != null) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        quizId = quiz.id,
-                        questions = quiz.questions
-                    )
+                    _uiState.value = QuizUiState(quizId = quiz.id, questions = quiz.questions)
                 } else {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to load quiz"
-                    )
+                    _uiState.value = QuizUiState(errorMessage = "Failed to load quiz")
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = e.message
-                )
+                _uiState.value = QuizUiState(errorMessage = e.message)
             }
         }
     }
